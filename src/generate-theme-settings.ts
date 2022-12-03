@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import { toSnakeCase } from "../utils/to-snake-case";
-import { ShopifySettings } from "../@types/shopify";
+import { toSnakeCase } from "./../utils/to-snake-case";
+import { ShopifySettings } from "types/shopify";
 
 export const generateThemeSettings = (settingsSchema: ShopifySettings, folder) => {
   const localizedSettings = settingsSchema.map(({ name, ...settingsBlock }) => {

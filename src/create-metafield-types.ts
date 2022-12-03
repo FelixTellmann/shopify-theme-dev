@@ -1,8 +1,6 @@
 import chalk from "chalk";
 import fs from "fs";
 import path from "path";
-import { GraphqlClient } from "shopify-typed-node-api/dist/clients/graphql";
-import { MetafieldDefinitionsQuery, MetafieldDefinitionsQueryVariables } from "./shopify-gql-types";
 
 const ownerTypes = [
   "ARTICLE",

@@ -2,16 +2,16 @@ import chalk from "chalk";
 import { Command } from "commander";
 import fs from "fs";
 import path from "path";
-import { generateThemeLocales } from "./utils/generate-theme-locales";
-import { generateThemeSections } from "./utils/generate-theme-sections";
-import { generateThemeSettings } from "./utils/generate-theme-settings";
-import { initThemeFolders } from "./utils/init-theme-folders";
-import { createMetafieldTypes } from "./utils/create-metafield-types";
-import { ShopifySection, ShopifySettings } from "./@types/shopify";
-import { generateSections } from "./utils/generate-sections";
-import { generateSettings } from "./utils/generate-settings";
-import { copyFiles } from "./utils/init-copy-files";
-import { initFolders } from "./utils/init-folders";
+import { generateThemeLocales } from "./generate-theme-locales";
+import { generateThemeSections } from "./generate-theme-sections";
+import { generateThemeSettings } from "./generate-theme-settings";
+import { initThemeFolders } from "./init-theme-folders";
+import { createMetafieldTypes } from "./create-metafield-types";
+import { ShopifySection, ShopifySettings } from "types/shopify";
+import { generateSections } from "./generate-sections";
+import { generateSettings } from "./generate-settings";
+import { copyFiles } from "./init-copy-files";
+import { initFolders } from "./init-folders";
 
 const watch = require("node-watch");
 

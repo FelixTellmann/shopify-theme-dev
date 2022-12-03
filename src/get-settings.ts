@@ -1,9 +1,18 @@
 import fs from "fs";
 import path from "path";
-import { ShopifySettings, ShopifySettingsInput } from "../@types/shopify";
+import { RestClient } from "shopify-typed-node-api/dist/clients/rest";
+import { Asset } from "shopify-typed-node-api/dist/clients/rest/dataTypes";
+import { ShopifySettings, ShopifySettingsInput } from "types/shopify";
 import { getSettingsType } from "./generate-sections";
 
-export const generateSettings = async (settingsSchema: ShopifySettings) => {
+export const getSettings = async (api: RestClient, SHOPIFY_CMS_THEME_ID: string) => {
+  const themeSettings = await api.get<Asset.GetById>({
+    path: `themes/${SHOPIFY_CMS_THEME_ID}/assets`,
+    query: { "asset[key]": `config/settings_schema.json` },
+  });
+
+  const settingsSchema = JSON.parse(themeSettings.body?.asset?.value) as ShopifySettings;
+
   const settings = settingsSchema.reduce((acc: ShopifySettingsInput[], group) => {
     if (!("settings" in group)) return acc;
 
@@ -44,10 +53,6 @@ export const generateSettings = async (settingsSchema: ShopifySettings) => {
     if (setting.type === "font_picker") {
       if (localTypes.includes("_Font_liquid")) return;
       localTypes.push("_Font_liquid");
-    }
-    if (setting.type === "font_picker") {
-      if (localTypes.includes("_Font_options")) return;
-      localTypes.push("_Font_options");
     }
     if (setting.type === "link_list") {
       if (localTypes.includes("_Linklist_liquid")) return;

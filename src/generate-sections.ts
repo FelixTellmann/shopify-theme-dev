@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import { toPascalCase } from "../utils/to-pascal-case";
-import { ShopifySection, ShopifySettingsInput } from "../@types/shopify";
-import { capitalize } from "./capitalize";
-import { toKebabCase } from "./to-kebab-case";
+import { ShopifySection, ShopifySettingsInput } from "types/shopify";
+import { capitalize } from "./../utils/capitalize";
+import { toKebabCase } from "./../utils/to-kebab-case";
 
 export const sectionToLiquid = (section, key) => {
   return `

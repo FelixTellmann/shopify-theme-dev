@@ -1,7 +1,5 @@
-import chalk from "chalk";
 import fs from "fs";
 import path from "path";
-import { PROJECT_ROOT } from "./project-root";
 
 export const initThemeFolders = (folder: string) => {
   /*= =============== Root Folder ================ */

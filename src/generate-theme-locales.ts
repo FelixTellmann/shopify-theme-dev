@@ -3,7 +3,7 @@ import fs from "fs";
 import produce from "immer";
 import path from "path";
 import { ShopifySection, ShopifySettings } from "types/shopify";
-import { toSnakeCase } from "../utils/to-snake-case";
+import { toSnakeCase } from "./../utils/to-snake-case";
 
 const generateSettings = (settings) => {
   if (!settings) return undefined;

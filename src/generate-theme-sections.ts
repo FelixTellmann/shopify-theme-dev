@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { toSnakeCase } from "../utils/to-snake-case";
-import { ShopifySection } from "../@types/shopify";
-import { toKebabCase } from "./to-kebab-case";
+import { toSnakeCase } from "./../utils/to-snake-case";
+import { ShopifySection } from "types/shopify";
+import { toKebabCase } from "./../utils/to-kebab-case";
 
 export const sectionToLiquid_WithLocalization = ({ name, ...section }, key) => {
   const sectionName = toSnakeCase(name);
