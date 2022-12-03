@@ -19,7 +19,7 @@ require("dotenv").config();
 
 const program = new Command();
 
-program.version(require("./package.json").version).parse(process.argv);
+program.version(require("./../package.json").version).parse(process.argv);
 
 const { SHOPIFY_SETTINGS_FOLDER, SHOPIFY_THEME_FOLDER } = process.env;
 
