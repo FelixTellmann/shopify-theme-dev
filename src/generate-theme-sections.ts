@@ -103,7 +103,7 @@ export const sectionToLiquid_WithLocalization = ({ name, ...section }, key) => {
 
   return `
  ${process.env.SHOPIFY_SECTIONS_BEFORE_RENDER}
-{% render "section_${toKebabCase(key)}" %}
+{% render "s.${toKebabCase(key)}" %}
 ${process.env.SHOPIFY_SECTIONS_AFTER_RENDER}
 {% schema %}
 ${JSON.stringify(localizedSection, undefined, 2)}
@@ -114,7 +114,7 @@ ${JSON.stringify(localizedSection, undefined, 2)}
 export const generateThemeSections = (sections: { [p: string]: ShopifySection }, folder) => {
   for (const key in sections) {
     const section = sections[key];
-    const snippetName = `section_${toKebabCase(key)}.liquid`;
+    const snippetName = `s.${toKebabCase(key)}.liquid`;
     const sectionName = `${toKebabCase(key)}.liquid`;
     const content = sectionToLiquid_WithLocalization(section, key);
 
