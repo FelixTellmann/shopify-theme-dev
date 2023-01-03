@@ -8,8 +8,8 @@ import { ShopifySection, ShopifySettings } from "types/shopify";
 import { createMetafieldTypes } from "./create-metafield-types";
 import { generateSectionsTypes, updateSectionsSettings } from "./generate-sections";
 import { generateSettings } from "./generate-settings";
-import { generateThemeLocales } from "./generate-theme-locales";
-import { generateThemeSections } from "./generate-theme-sections";
+import { generateSchemaLocales } from "./generate-schema-locales";
+import { generateThemeFiles } from "./generate-theme-files";
 import { generateThemeSettings } from "./generate-theme-settings";
 
 import { copyFiles } from "./init-copy-files";
@@ -24,7 +24,7 @@ const program = new Command();
 
 program.version(require("./../package.json").version).parse(process.argv);
 
-const { SHOPIFY_SETTINGS_FOLDER, SHOPIFY_THEME_FOLDER } = process.env;
+const { SHOPIFY_THEME_FOLDER } = process.env;
 
 export const init = async () => {
   const root = process.cwd();
@@ -45,8 +45,6 @@ export const init = async () => {
   createMetafieldTypes();
   // copyFiles();
 
-  if (!SHOPIFY_SETTINGS_FOLDER) return;
-
   console.log(
     `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.magentaBright(
       `Watching for changes`
@@ -57,27 +55,21 @@ export const init = async () => {
     watch([sectionsFolder, globalsFolder], { recursive: true }, async (evt, name) => {
       const startTime = Date.now();
 
-      const isSettingUpdate =
-        /sections\\[^\\]*\\schema.ts$/gi.test(name) ||
-        /globals\\settings_schema\.ts$/gi.test(name) ||
-        /globals\\settings\\[^\\]*\.ts$/gi.test(name);
-
-      if (isSettingUpdate) {
-        // const files = fs.readdirSync(sectionsFolder);
-        const sections = getSectionSchemas();
-        const settings = getSettingsSchemas();
-
-        generateSectionsTypes(sections);
-        updateSectionsSettings(sections);
-        generateThemeLocales(sections, settings, SHOPIFY_THEME_FOLDER);
-        generateSettings(settings.settingsSchema);
-        generateThemeSettings(settings.settingsSchema, SHOPIFY_THEME_FOLDER);
-
+      if (isSettingUpdate(name)) {
         Object.keys(require.cache).forEach((path) => {
           if (path.includes(sectionsFolder) || path.includes(globalsFolder)) {
             delete require.cache[path];
           }
         });
+
+        const sections = getSectionSchemas();
+        const settings = getSettingsSchemas();
+
+        generateSectionsTypes(sections);
+        updateSectionsSettings(sections);
+        generateSchemaLocales(sections, settings, SHOPIFY_THEME_FOLDER);
+        generateSettings(settings.settingsSchema);
+        generateThemeSettings(settings.settingsSchema, SHOPIFY_THEME_FOLDER);
 
         console.log(
           `[${chalk.gray(new Date().toLocaleTimeString())}]: [${chalk.magentaBright(
@@ -85,21 +77,16 @@ export const init = async () => {
           )}] ${chalk.cyan(`File modified: ${name.replace(process.cwd(), "")}`)}`
         );
       }
-      if (/sections\\[^\\]*\\[^.]*\.liquid$/gi.test(name)) {
-        const sections = getSectionSchemas();
-        generateThemeSections(sections, SHOPIFY_THEME_FOLDER);
-      }
-      if (/sections\\[^\\]*\\[^.]*\.[^.]*\.liquid$/gi.test(name)) {
-        generateThemeSnippet(name, SHOPIFY_THEME_FOLDER);
-      }
-      if (/globals\\layout[^\\]*\.liquid$/gi.test(name)) {
-        generateThemeLayout(name, SHOPIFY_THEME_FOLDER);
-      }
-      if (/globals\\snippets\\[^\\]*\.liquid$/gi.test(name)) {
-        generateThemeSnippet(name, SHOPIFY_THEME_FOLDER);
-      }
 
-      compareDeleteSectionsAndSnippets(SHOPIFY_THEME_FOLDER);
+      if (isSection(name) || isSnippet(name) || isLayout(name)) {
+        Object.keys(require.cache).forEach((path) => {
+          if (path.includes(sectionsFolder) || path.includes(globalsFolder)) {
+            delete require.cache[path];
+          }
+        });
+
+        generateThemeFiles(SHOPIFY_THEME_FOLDER);
+      }
     });
   }
 };
@@ -139,15 +126,33 @@ export const getSettingsSchemas = () => {
   return require(filename) as { settingsSchema: ShopifySettings };
 };
 
-export const compareDeleteSectionsAndSnippets = (folder: string) => {
+export const getSourcePaths = () => {
+  const sourceFiles = [...getAllFiles("sections"), ...getAllFiles("globals")];
+  const snippets = [];
+  const layouts = [];
+  const sections = [];
+
+  sourceFiles.forEach((filePath) => {
+    if (isSnippet(filePath)) {
+      snippets.push(filePath);
+    }
+    if (isLayout(filePath)) {
+      layouts.push(filePath);
+    }
+    if (isSection(filePath)) {
+      sections.push(filePath);
+    }
+  });
+
+  return { snippets, layouts, sections };
+};
+
+export const generateLiquidFiles = (folder: string) => {
   const source = [...getAllFiles("sections"), ...getAllFiles("globals")];
   const target = getAllFiles(folder);
 
   for (let i = 0; i < source.length; i++) {
-    if (
-      /sections\\[^\\]*\\[^.]*\.[^.]*\.liquid$/gi.test(source[i]) ||
-      /globals\\snippets\\[^\\]*\.liquid$/gi.test(source[i])
-    ) {
+    if (isSnippet(source[i])) {
       const fileName = source[i].split("\\").at(-1);
       const targetFile = target.find((targetPath) => targetPath.includes(`snippets\\${fileName}`));
 
@@ -155,7 +160,7 @@ export const compareDeleteSectionsAndSnippets = (folder: string) => {
         generateThemeSnippet(source[i], folder);
       }
     }
-    if (/globals\\layout\\[^\\]*\.liquid$/gi.test(source[i])) {
+    if (isLayout(source[i])) {
       const fileName = source[i].split("\\").at(-1);
       const targetFile = target.find((targetPath) => targetPath.includes(`layout\\${fileName}`));
 
@@ -195,3 +200,16 @@ export const compareDeleteSectionsAndSnippets = (folder: string) => {
     }
   }
 };
+
+export const isSettingUpdate = (name) =>
+  /sections\\[^\\]*\\schema.ts$/gi.test(name) ||
+  /globals\\settings_schema\.ts$/gi.test(name) ||
+  /globals\\settings\\[^\\]*\.ts$/gi.test(name);
+
+export const isSection = (name) => /sections\\[^\\]*\\[^.]*\.liquid$/gi.test(name);
+
+export const isSnippet = (name) =>
+  /sections\\[^\\]*\\[^.]*\.[^.]*\.liquid$/gi.test(name) ||
+  /globals\\snippets\\[^\\]*\.liquid$/gi.test(name);
+
+export const isLayout = (name) => /globals\\layout\\[^\\]*\.liquid$/gi.test(name);

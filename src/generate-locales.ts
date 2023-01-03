@@ -57,7 +57,7 @@ const generateSettings = (settings) => {
   return settingsLocale;
 };
 
-export const generateThemeLocales = (
+export const generateSchemaLocales = (
   sections: { [T: string]: ShopifySection },
   settings: { settingsSchema: ShopifySettings },
   folder: string

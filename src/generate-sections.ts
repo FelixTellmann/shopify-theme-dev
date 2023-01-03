@@ -1,13 +1,13 @@
 import chalk from "chalk";
 import fs from "fs";
 import path from "path";
-import { sectionToLiquid_WithLocalization } from "src/generate-theme-sections";
+import { sectionToLiquid_WithLocalization } from "src/generate-theme-files";
 import { toPascalCase } from "../utils/to-pascal-case";
 import { ShopifySection, ShopifySettingsInput } from "types/shopify";
 import { capitalize } from "./../utils/capitalize";
 import { toKebabCase } from "./../utils/to-kebab-case";
 
-export const sectionToLiquid = (section, key) => {
+export const sectionToLiquid = ({ disabled_block_files, ...section }, key) => {
   return `
 ${process.env.SHOPIFY_SECTIONS_BEFORE_RENDER}
 {% render "s.${toKebabCase(key)}" %}
@@ -360,6 +360,7 @@ export const RESERVED_VARIABLES = [
 export const updateSectionsSettings = (sections: { [T: string]: ShopifySection }) => {
   for (const key in sections) {
     const section = sections[key];
+
     const sectionPath = path.join(
       process.cwd(),
       "sections",
@@ -403,10 +404,11 @@ export const updateSectionsSettings = (sections: { [T: string]: ShopifySection }
       const sectionContent = fs.readFileSync(sectionPath, {
         encoding: "utf-8",
       });
+
       if (sectionContent.includes(start) && sectionContent.includes(end)) {
         const newContent = sectionContent.replace(
           // eslint-disable-next-line max-len
-          /\{%- comment -%} Auto Generated Variables start \{%- endcomment -%}(.|\n)*?\{%- comment -%} Auto Generated Variables end \{%- endcomment -%}\n*/,
+          /({%- comment -%} Auto Generated Variables start {%- endcomment -%})(.|\n|\r)*({%- comment -%} Auto Generated Variables end {%- endcomment -%})(\r|\n|\s)*/gim,
           variableContent
         );
 
@@ -433,7 +435,7 @@ export const updateSectionsSettings = (sections: { [T: string]: ShopifySection }
     }
 
     if (section.disabled_block_files) {
-      return;
+      continue;
     }
     section.blocks?.forEach((block) => {
       if (block.type === "@app") return;
@@ -481,7 +483,7 @@ export const updateSectionsSettings = (sections: { [T: string]: ShopifySection }
         if (blockContent.includes(start) && blockContent.includes(end)) {
           const newContent = blockContent.replace(
             // eslint-disable-next-line max-len
-            /\{%- comment -%} Auto Generated Variables start \{%- endcomment -%}(.|\n)*?\{%- comment -%} Auto Generated Variables end \{%- endcomment -%}\n*/,
+            /({%- comment -%} Auto Generated Variables start {%- endcomment -%})(.|\n|\r)*({%- comment -%} Auto Generated Variables end {%- endcomment -%})(\r|\n|\s)*/gim,
             variableContent
           );
 
