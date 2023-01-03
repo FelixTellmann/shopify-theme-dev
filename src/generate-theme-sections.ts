@@ -1,5 +1,7 @@
+import chalk from "chalk";
 import fs from "fs";
 import path from "path";
+import { writeCompareFile } from "./generate-sections";
 import { toSnakeCase } from "./../utils/to-snake-case";
 import { ShopifySection } from "types/shopify";
 import { toKebabCase } from "./../utils/to-kebab-case";
@@ -101,38 +103,41 @@ export const sectionToLiquid_WithLocalization = ({ name, ...section }, key) => {
     }),
   };
 
-  return `
- ${process.env.SHOPIFY_SECTIONS_BEFORE_RENDER}
-{% render "s.${toKebabCase(key)}" %}
-${process.env.SHOPIFY_SECTIONS_AFTER_RENDER}
-{% schema %}
-${JSON.stringify(localizedSection, undefined, 2)}
-{% endschema %} 
-`;
+  const returnArr = [];
+  if (process.env.SHOPIFY_SECTIONS_BEFORE_RENDER) {
+    returnArr.push(process.env.SHOPIFY_SECTIONS_BEFORE_RENDER);
+  }
+  const content = fs.readFileSync(
+    path.join(process.cwd(), "sections", toKebabCase(key), `${toKebabCase(key)}.liquid`),
+    {
+      encoding: "utf-8",
+    }
+  );
+  if (content) {
+    returnArr.push(content);
+  }
+
+  if (process.env.SHOPIFY_SECTIONS_AFTER_RENDER) {
+    returnArr.push(process.env.SHOPIFY_SECTIONS_AFTER_RENDER);
+  }
+
+  returnArr.push("{% schema %}");
+  returnArr.push(JSON.stringify(localizedSection, undefined, 2));
+  returnArr.push("{% endschema %}");
+  returnArr.push("");
+  return returnArr.join("\n");
 };
 
 export const generateThemeSections = (sections: { [p: string]: ShopifySection }, folder) => {
   for (const key in sections) {
-    const section = sections[key];
-    const snippetName = `s.${toKebabCase(key)}.liquid`;
-    const sectionName = `${toKebabCase(key)}.liquid`;
-    const content = sectionToLiquid_WithLocalization(section, key);
-
-    if (!fs.existsSync(path.join(process.cwd(), folder, "snippets", snippetName))) {
-      fs.writeFileSync(path.join(process.cwd(), folder, "snippets", snippetName), `<div></div>`);
-    }
-
-    if (!fs.existsSync(path.join(process.cwd(), folder, "sections", sectionName))) {
-      fs.writeFileSync(path.join(process.cwd(), folder, "sections", sectionName), content);
-    }
-
-    const contentVerification = fs.readFileSync(
-      path.join(process.cwd(), folder, "sections", sectionName),
-      { encoding: "utf-8" }
-    );
-
-    if (contentVerification !== content) {
-      fs.writeFileSync(path.join(process.cwd(), folder, "sections", sectionName), content);
-    }
+    generateThemeSection(sections[key], key, folder);
   }
+};
+
+export const generateThemeSection = (section: ShopifySection, key: string, folder) => {
+  const sectionName = `${toKebabCase(key)}.liquid`;
+  const sectionPath = path.join(process.cwd(), folder, "sections", sectionName);
+  const sectionSchemaAndContent = sectionToLiquid_WithLocalization(section, key);
+
+  writeCompareFile(sectionPath, sectionSchemaAndContent);
 };

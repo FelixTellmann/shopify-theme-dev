@@ -9,6 +9,9 @@ export const initThemeFolders = (folder: string) => {
 
   /*= =============== Theme ================ */
 
+  if (!fs.existsSync(path.join(process.cwd(), folder, "assets"))) {
+    fs.mkdirSync(path.join(process.cwd(), folder, "assets"));
+  }
   if (!fs.existsSync(path.join(process.cwd(), folder, "locales"))) {
     fs.mkdirSync(path.join(process.cwd(), folder, "locales"));
   }

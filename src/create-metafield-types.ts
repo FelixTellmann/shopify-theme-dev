@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import fs from "fs";
 import path from "path";
+import { writeCompareFile } from "./generate-sections";
 
 const ownerTypes = [
   "ARTICLE",
@@ -145,32 +146,8 @@ export async function createMetafieldTypes() {
     }
   });
 
-  const masterFile = metafieldTypesContent.join("\n");
+  const metafieldPath = path.join(process.cwd(), "@types", "metafields.ts");
+  const metafieldContent = metafieldTypesContent.join("\n");
 
-  if (
-    !fs.existsSync(path.join(process.cwd(), ".shopify-typed-settings", "types", "metafields.ts"))
-  ) {
-    console.log(chalk.green("created metafields.ts"));
-    fs.writeFileSync(
-      path.join(process.cwd(), ".shopify-typed-settings", "types", "metafields.ts"),
-      masterFile
-    );
-  }
-
-  if (
-    fs.existsSync(path.join(process.cwd(), ".shopify-typed-settings", "types", "metafields.ts"))
-  ) {
-    const currentFile = fs.readFileSync(
-      path.join(process.cwd(), ".shopify-typed-settings", "types", "metafields.ts"),
-      { encoding: "utf-8" }
-    );
-
-    if (masterFile !== currentFile) {
-      console.log(chalk.green("updated metafields.ts"));
-      fs.writeFileSync(
-        path.join(process.cwd(), ".shopify-typed-settings", "types", "metafields.ts"),
-        masterFile
-      );
-    }
-  }
+  writeCompareFile(metafieldPath, metafieldContent);
 }

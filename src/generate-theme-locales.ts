@@ -57,46 +57,11 @@ const generateSettings = (settings) => {
   return settingsLocale;
 };
 
-export const generateThemeLocales = (settingsFolder, folder) => {
-  const files = fs.readdirSync(path.join(process.cwd(), settingsFolder));
-
-  const sectionFiles = files.filter((name) => {
-    if (!name.match(/\.(ts|tsx)$/)) return false;
-    if (name.match(/^index\.ts.$/)) return false;
-    if (name.match(/^_/)) return false;
-    if (name.match("settings_schema")) return false;
-    const isDirectory = fs.statSync(path.join(process.cwd(), settingsFolder, name)).isDirectory();
-    if (isDirectory) return false;
-    return true;
-  });
-
-  const sections: { [T: string]: ShopifySection } = sectionFiles.reduce(
-    (acc, file) => {
-      try {
-        const fileName = path.join(process.cwd(), settingsFolder, file);
-
-        const data = require(fileName);
-        delete require.cache[fileName];
-        return { ...acc, ...data };
-      } catch (err) {
-        console.log(chalk.redBright(err.message));
-        return acc;
-      }
-    },
-    {} as { [T: string]: ShopifySection }
-  );
-
-  const settingsFilename = files.find((name) => name.match("settings_schema"));
-  let settings: { settingsSchema: ShopifySettings };
-
-  try {
-    const fileName = path.join(process.cwd(), settingsFolder, settingsFilename);
-    settings = require(fileName);
-    delete require.cache[fileName];
-  } catch (err) {
-    console.log(chalk.redBright(err.message));
-  }
-
+export const generateThemeLocales = (
+  sections: { [T: string]: ShopifySection },
+  settings: { settingsSchema: ShopifySettings },
+  folder: string
+) => {
   let returnObject = {
     settings_schema: {},
     sections: {},

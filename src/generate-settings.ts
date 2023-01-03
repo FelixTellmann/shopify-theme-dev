@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import { ShopifySettings, ShopifySettingsInput } from "types/shopify";
-import { getSettingsType } from "./generate-sections";
+import { getSettingsType, writeCompareFile } from "./generate-sections";
 
-export const generateSettings = async (settingsSchema: ShopifySettings) => {
+export const generateSettings = (settingsSchema: ShopifySettings) => {
   const settings = settingsSchema.reduce((acc: ShopifySettingsInput[], group) => {
     if (!("settings" in group)) return acc;
 
@@ -105,63 +105,7 @@ export const generateSettings = async (settingsSchema: ShopifySettings) => {
     "\n"
   )}\n`;
 
-  if (!fs.existsSync(path.join(process.cwd(), ".shopify-typed-settings", "types", "settings.ts"))) {
-    fs.writeFileSync(
-      path.join(process.cwd(), ".shopify-typed-settings", "types", "settings.ts"),
-      typesContent
-    );
-    return;
-  }
+  const settingsTypesPath = path.join(process.cwd(), "@types", "settings.ts");
 
-  const indexContentVerification = fs.readFileSync(
-    path.join(process.cwd(), ".shopify-typed-settings", "types", "settings.ts"),
-    {
-      encoding: "utf-8",
-    }
-  );
-
-  if (indexContentVerification !== typesContent) {
-    fs.writeFileSync(
-      path.join(process.cwd(), ".shopify-typed-settings", "types", "settings.ts"),
-      typesContent
-    );
-  }
-
-  const schemaContent = JSON.stringify(settingsSchema, undefined, 2);
-  if (
-    !fs.existsSync(
-      path.join(process.cwd(), ".shopify-typed-settings", "theme", "config", "settings_schema.json")
-    )
-  ) {
-    fs.writeFileSync(
-      path.join(
-        process.cwd(),
-        ".shopify-typed-settings",
-        "theme",
-        "config",
-        "settings_schema.json"
-      ),
-      schemaContent
-    );
-  }
-
-  const contentVerification = fs.readFileSync(
-    path.join(process.cwd(), ".shopify-typed-settings", "theme", "config", "settings_schema.json"),
-    {
-      encoding: "utf-8",
-    }
-  );
-
-  if (contentVerification !== schemaContent) {
-    fs.writeFileSync(
-      path.join(
-        process.cwd(),
-        ".shopify-typed-settings",
-        "theme",
-        "config",
-        "settings_schema.json"
-      ),
-      schemaContent
-    );
-  }
+  writeCompareFile(settingsTypesPath, typesContent);
 };

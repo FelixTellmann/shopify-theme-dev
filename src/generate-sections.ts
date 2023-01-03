@@ -1,5 +1,7 @@
+import chalk from "chalk";
 import fs from "fs";
 import path from "path";
+import { sectionToLiquid_WithLocalization } from "src/generate-theme-sections";
 import { toPascalCase } from "../utils/to-pascal-case";
 import { ShopifySection, ShopifySettingsInput } from "types/shopify";
 import { capitalize } from "./../utils/capitalize";
@@ -130,7 +132,7 @@ export const getImports = (sections: { [T: string]: ShopifySection }) => {
 
     section.settings?.forEach(analyseSetting, localTypes);
     section.blocks?.forEach((block) => {
-      block.settings?.forEach(analyseSetting, localTypes);
+      block?.settings?.forEach(analyseSetting, localTypes);
     });
   }
 
@@ -188,7 +190,7 @@ export const sectionToTypes = (section, key) => {
 
   if (section.blocks?.length) {
     section.blocks?.forEach((block) => {
-      const blockSettings: ShopifySettingsInput[] = block.settings
+      const blockSettings: ShopifySettingsInput[] = block?.settings
         ?.filter((s) => s.type !== "header" && s.type !== "paragraph")
         .sort((a, b) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0));
 
@@ -260,6 +262,8 @@ export const sectionToTypes = (section, key) => {
 };
 
 export const generateSectionsTypes = (sections: { [T: string]: ShopifySection }) => {
+  const sectionTypesPath = path.join(process.cwd(), "@types", "sections.ts");
+
   const imports = getImports(sections);
   let sectionUnionType = "export type Sections =";
   let typeContent = "";
@@ -273,68 +277,235 @@ export const generateSectionsTypes = (sections: { [T: string]: ShopifySection })
   if (!typeContent) return;
 
   const finalContent = `${imports + typeContent + sectionUnionType};\n`;
-  if (!fs.existsSync(path.join(process.cwd(), ".shopify-typed-settings", "types", "sections.ts"))) {
-    fs.writeFileSync(
-      path.join(process.cwd(), ".shopify-typed-settings", "types", "sections.ts"),
-      finalContent
+
+  writeCompareFile(sectionTypesPath, finalContent);
+};
+
+export const writeCompareFile = (path: string, content: string) => {
+  if (!fs.existsSync(path)) {
+    fs.writeFileSync(path, content);
+    console.log(
+      `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+        `Created: ${path.replace(process.cwd(), "")}`
+      )}`
     );
     return;
   }
 
-  const indexContentVerification = fs.readFileSync(
-    path.join(process.cwd(), ".shopify-typed-settings", "types", "sections.ts"),
-    {
-      encoding: "utf-8",
-    }
-  );
+  const contentVerification = fs.readFileSync(path, {
+    encoding: "utf-8",
+  });
 
-  if (indexContentVerification !== finalContent) {
-    fs.writeFileSync(
-      path.join(process.cwd(), ".shopify-typed-settings", "types", "sections.ts"),
-      finalContent
+  if (contentVerification !== content) {
+    console.log(
+      `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+        `Updated: ${path.replace(process.cwd(), "")}`
+      )}`
     );
+    fs.writeFileSync(path, content);
   }
 };
 
-export const generateSections = async (sections: { [p: string]: ShopifySection }) => {
-  generateSectionsTypes(sections);
+export const RESERVED_VARIABLES = [
+  "additional_checkout_buttons",
+  "all_country_option_tags",
+  "all_products",
+  "articles",
+  "blogs",
+  "canonical_url",
+  "collections",
+  "content_for_additional_checkout_buttons",
+  "content_for_header",
+  "content_for_index",
+  "content_for_layout",
+  "country_option_tags",
+  "current_page",
+  "customer",
+  "handle",
+  "images",
+  "linklists",
+  "page_description",
+  "page_image",
+  "page_title",
+  "pages",
+  "powered_by_link",
+  "settings",
+  "collection",
+  "canonical_url ",
+  "product",
+  "shop",
+  "page",
+  "blog",
+  "request",
+  "scripts",
+  "paginate",
+  "checkout",
+  "location",
+  "current_tags",
+  "block",
+  "blocks",
+  "currency",
+  "date",
+  "gift_card",
+  "routes",
+  "sitemap",
+  "theme",
+  "shop_locale",
+  "template",
+  "search",
+  "recommendations",
+  "group",
+];
+
+export const updateSectionsSettings = (sections: { [T: string]: ShopifySection }) => {
   for (const key in sections) {
     const section = sections[key];
-    const snippetName = `s.${toKebabCase(key)}.liquid`;
-    const sectionName = `${toKebabCase(key)}.liquid`;
-    const content = sectionToLiquid(section, key);
-
-    if (
-      !fs.existsSync(
-        path.join(process.cwd(), ".shopify-typed-settings", "theme", "snippets", snippetName)
-      )
-    ) {
-      fs.writeFileSync(
-        path.join(process.cwd(), ".shopify-typed-settings", "theme", "snippets", snippetName),
-        `<div></div>`
-      );
-    }
-
-    if (
-      !fs.existsSync(
-        path.join(process.cwd(), ".shopify-typed-settings", "theme", "sections", sectionName)
-      )
-    ) {
-      fs.writeFileSync(
-        path.join(process.cwd(), ".shopify-typed-settings", "theme", "sections", sectionName),
-        content
-      );
-    }
-
-    const contentVerification = fs.readFileSync(
-      path.join(process.cwd(), ".shopify-typed-settings", "theme", "sections", sectionName),
-      { encoding: "utf-8" }
+    const sectionPath = path.join(
+      process.cwd(),
+      "sections",
+      toKebabCase(key),
+      `${toKebabCase(key)}.liquid`
     );
-    if (contentVerification !== content) {
-      fs.writeFileSync(
-        path.join(process.cwd(), ".shopify-typed-settings", "theme", "sections", sectionName),
-        content
+
+    const start = "{%- comment -%} Auto Generated Variables start {%- endcomment -%}";
+    const end = "{%- comment -%} Auto Generated Variables end {%- endcomment -%}";
+
+    const sectionVariables = [start];
+    sectionVariables.push("{%- liquid");
+
+    section.settings?.forEach((setting) => {
+      if (setting.type === "header" || setting.type === "paragraph") return;
+      sectionVariables.push(
+        `  assign ${
+          RESERVED_VARIABLES.includes(setting.id) ? `_${setting.id}` : setting.id
+        } = section.settings.${setting.id}`
       );
+    });
+
+    sectionVariables.push("-%}");
+    sectionVariables.push(end);
+    sectionVariables.push("");
+    sectionVariables.push("");
+
+    const variableContent =
+      section.settings && section.settings.length ? sectionVariables.join("\n") : "";
+
+    if (!fs.existsSync(sectionPath)) {
+      console.log(
+        `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+          `Created: ${sectionPath.replace(process.cwd(), "")}`
+        )}`
+      );
+      fs.writeFileSync(sectionPath, section.settings ? sectionVariables.join("\n") : "");
     }
+
+    if (fs.existsSync(sectionPath)) {
+      const sectionContent = fs.readFileSync(sectionPath, {
+        encoding: "utf-8",
+      });
+      if (sectionContent.includes(start) && sectionContent.includes(end)) {
+        const newContent = sectionContent.replace(
+          // eslint-disable-next-line max-len
+          /\{%- comment -%} Auto Generated Variables start \{%- endcomment -%}(.|\n)*?\{%- comment -%} Auto Generated Variables end \{%- endcomment -%}\n*/,
+          variableContent
+        );
+
+        if (sectionContent !== newContent) {
+          console.log(
+            `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+              `Updated: ${sectionPath.replace(process.cwd(), "")}`
+            )}`
+          );
+          fs.writeFileSync(sectionPath, newContent);
+        }
+      }
+
+      if (!sectionContent.includes(start) && !sectionContent.includes(end) && variableContent) {
+        const newContent = variableContent + sectionContent;
+
+        console.log(
+          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+            `Updated: ${sectionPath.replace(process.cwd(), "")}`
+          )}`
+        );
+        fs.writeFileSync(sectionPath, newContent);
+      }
+    }
+
+    if (section.disabled_block_files) {
+      return;
+    }
+    section.blocks?.forEach((block) => {
+      if (block.type === "@app") return;
+
+      const blockPath = path.join(
+        process.cwd(),
+        "sections",
+        toKebabCase(key),
+        `${toKebabCase(key)}.${block.type}.liquid`
+      );
+
+      const blockVariables = [start];
+      blockVariables.push("{%- liquid");
+
+      block?.settings?.forEach((setting) => {
+        if (setting.type === "header" || setting.type === "paragraph") return;
+        blockVariables.push(
+          `  assign ${
+            RESERVED_VARIABLES.includes(setting.id) ? `_${setting.id}` : setting.id
+          } = block.settings.${setting.id}`
+        );
+      });
+
+      blockVariables.push("-%}");
+      blockVariables.push(end);
+      blockVariables.push("");
+      blockVariables.push("");
+
+      const variableContent =
+        block?.settings && block?.settings?.length ? blockVariables.join("\n") : "";
+
+      if (!fs.existsSync(blockPath)) {
+        console.log(
+          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+            `Created: ${blockPath.replace(process.cwd(), "")}`
+          )}`
+        );
+        fs.writeFileSync(blockPath, block?.settings ? blockVariables.join("\n") : "");
+      }
+
+      if (fs.existsSync(blockPath)) {
+        const blockContent = fs.readFileSync(blockPath, {
+          encoding: "utf-8",
+        });
+        if (blockContent.includes(start) && blockContent.includes(end)) {
+          const newContent = blockContent.replace(
+            // eslint-disable-next-line max-len
+            /\{%- comment -%} Auto Generated Variables start \{%- endcomment -%}(.|\n)*?\{%- comment -%} Auto Generated Variables end \{%- endcomment -%}\n*/,
+            variableContent
+          );
+
+          if (blockContent !== newContent) {
+            console.log(
+              `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+                `Updated: ${blockPath.replace(process.cwd(), "")}`
+              )}`
+            );
+            fs.writeFileSync(blockPath, newContent);
+          }
+        }
+
+        if (!blockContent.includes(start) && !blockContent.includes(end) && variableContent) {
+          const newContent = variableContent + blockContent;
+
+          console.log(
+            `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+              `Updated: ${blockPath.replace(process.cwd(), "")}`
+            )}`
+          );
+          fs.writeFileSync(blockPath, newContent);
+        }
+      }
+    });
   }
 };

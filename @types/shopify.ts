@@ -364,6 +364,7 @@ export type ShopifySection<T = never> = {
     | "product"
     | "search"
   )[];
+  disabled_block_files?: boolean;
 };
 
 export type ShopifySettings = (
