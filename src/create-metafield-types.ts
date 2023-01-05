@@ -132,7 +132,9 @@ export async function createMetafieldTypes() {
   returnData.forEach(({ owner, data }) => {
     if (data.length === 0) {
       metafieldTypesContent.push(
-        `export type ${getKeyType(owner)} = { [T: string]: _Metafield_liquid };\n`
+        `export type ${getKeyType(
+          owner
+        )} = { [T: string]: { [T: string]: _Metafield_liquid["value"] } };\n`
       );
     }
     if (data.length > 0) {

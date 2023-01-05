@@ -702,6 +702,7 @@ export type _Product_liquid = {
   type: string;
   url: string;
   variants: _Variant_liquid[];
+  selected_or_first_available_variant: _Variant_liquid;
   vendor: string;
   compare_at_price?: number;
   featured_image?: string;
