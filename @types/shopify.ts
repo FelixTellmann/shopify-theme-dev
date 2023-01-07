@@ -724,6 +724,15 @@ export type _Media_liquid = {
   src: string;
   width: number;
   alt?: string;
+  sources?: _Media_liquid_source[];
+};
+
+export type _Media_liquid_source = {
+  format: string;
+  height: number;
+  mime_type: string;
+  url: string;
+  width: number;
 };
 
 export type _Collection_liquid = {
