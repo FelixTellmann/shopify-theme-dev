@@ -725,6 +725,7 @@ export type _Media_liquid = {
   width: number;
   alt?: string;
   external_id?: string;
+  host?: "youtube" | "vimeo";
   sources?: _Media_liquid_source[];
 };
 
