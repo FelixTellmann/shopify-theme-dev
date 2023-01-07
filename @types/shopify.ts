@@ -724,6 +724,7 @@ export type _Media_liquid = {
   src: string;
   width: number;
   alt?: string;
+  external_id?: string;
   sources?: _Media_liquid_source[];
 };
 
