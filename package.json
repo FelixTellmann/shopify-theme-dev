@@ -38,6 +38,7 @@
     "@swc/helpers": "^0.4.14",
     "chalk": "4.1.2",
     "commander": "^9.4.1",
+    "decache": "^4.6.1",
     "dotenv": "^16.0.3",
     "immer": "^9.0.16",
     "inquirer": "9.1.4",

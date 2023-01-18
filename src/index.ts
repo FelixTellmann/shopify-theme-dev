@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { Command } from "commander";
+import decache from "decache";
 import fs from "fs";
 import path from "path";
 import { generateThemeLayout } from "./generate-theme-layout";
@@ -58,6 +59,7 @@ export const init = async () => {
       if (isSettingUpdate(name)) {
         Object.keys(require.cache).forEach((path) => {
           if (path.includes(sectionsFolder) || path.includes(globalsFolder)) {
+            decache(path);
             delete require.cache[path];
           }
         });
@@ -70,7 +72,7 @@ export const init = async () => {
         generateSchemaLocales(sections, settings, SHOPIFY_THEME_FOLDER);
         generateSettings(settings.settingsSchema);
         generateThemeSettings(settings.settingsSchema, SHOPIFY_THEME_FOLDER);
-
+        generateThemeFiles(SHOPIFY_THEME_FOLDER);
         console.log(
           `[${chalk.gray(new Date().toLocaleTimeString())}]: [${chalk.magentaBright(
             `${Date.now() - startTime}ms`
@@ -81,6 +83,7 @@ export const init = async () => {
       if (isSection(name) || isSnippet(name) || isLayout(name)) {
         Object.keys(require.cache).forEach((path) => {
           if (path.includes(sectionsFolder) || path.includes(globalsFolder)) {
+            decache(path);
             delete require.cache[path];
           }
         });

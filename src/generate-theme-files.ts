@@ -9,7 +9,7 @@ import { ShopifySection } from "types/shopify";
 import { toKebabCase } from "./../utils/to-kebab-case";
 
 export const sectionToLiquid_WithLocalization = (
-  { name, disabled_block_files, ...section }: ShopifySection,
+  { name, disabled_block_files, generate_block_files, ...section }: ShopifySection,
   key
 ) => {
   const sectionName = toSnakeCase(name);

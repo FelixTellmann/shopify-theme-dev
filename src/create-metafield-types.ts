@@ -21,6 +21,12 @@ const getType = (type) => {
     case "list.product_reference": {
       return `Omit<_Product_liquid, "metafields">[]`;
     }
+    case "collection_reference": {
+      return `Omit<_Collection_liquid, "metafields">`;
+    }
+    case "list.collection_reference": {
+      return `Omit<_Collection_liquid, "metafields">[]`;
+    }
     case "variant_reference": {
       return "_Variant_liquid_json";
     }

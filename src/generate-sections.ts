@@ -64,6 +64,8 @@ export const getSettingsType = (setting: ShopifySettingsInput) => {
       return "?: _Product_liquid[]";
     case "richtext":
       return "?: `<p${string}</p>`";
+    case "inline_richtext":
+      return "?: string";
     case "url":
       return "?: string";
     case "video_url":
@@ -439,6 +441,12 @@ export const updateSectionsSettings = (sections: { [T: string]: ShopifySection }
     }
     section.blocks?.forEach((block) => {
       if (block.type === "@app") return;
+      if (
+        section.generate_block_files?.length &&
+        !section.generate_block_files.includes(block.type)
+      ) {
+        return;
+      }
 
       const blockPath = path.join(
         process.cwd(),

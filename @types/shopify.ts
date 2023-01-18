@@ -175,6 +175,13 @@ export type ShopifyRichtext = {
   default?: `<p${string}</p>`;
   info?: string;
 };
+export type ShopifyInlineRichtext = {
+  id: string;
+  label: string;
+  type: "inline_richtext";
+  default?: string;
+  info?: string;
+};
 export type ShopifyUrl = {
   id: string;
   label: string;
@@ -216,6 +223,7 @@ export type ShopifySettingsInput =
   | ShopifyProduct
   | ShopifyProduct_list
   | ShopifyRichtext
+  | ShopifyInlineRichtext
   | ShopifyUrl
   | ShopifyVideo_url;
 
@@ -243,6 +251,7 @@ type MapSettings<Section extends ShopifySection | ShopifySectionBlock> = {
     : ExtractSetting<Section, ID>["type"] extends
         | "text"
         | "textarea"
+        | "inline_richtext"
         | "color_background"
         | "html"
         | "liquid"
@@ -333,6 +342,26 @@ export type ShopifySectionBlock =
     }
   | { type: "@app"; limit?: never; name?: never; settings?: never };
 
+export type ShopifyTemplateTypes =
+  | "404"
+  | "article"
+  | "blog"
+  | "cart"
+  | "collection"
+  | "list-collections"
+  | "customers/account"
+  | "customers/activate_account"
+  | "customers/addresses"
+  | "customers/login"
+  | "customers/order"
+  | "customers/register"
+  | "customers/reset_password"
+  | "gift_card"
+  | "index"
+  | "page"
+  | "password"
+  | "product"
+  | "search";
 export type ShopifySection<T = never> = {
   name: string;
   blocks?: ShopifySectionBlock[];
@@ -343,29 +372,27 @@ export type ShopifySection<T = never> = {
   presets?: ShopifySectionPreset<T>[];
   settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
   tag?: "article" | "aside" | "div" | "footer" | "header" | "section";
-  templates?: (
-    | "404"
-    | "article"
-    | "blog"
-    | "cart"
-    | "collection"
-    | "list-collections"
-    | "customers/account"
-    | "customers/activate_account"
-    | "customers/addresses"
-    | "customers/login"
-    | "customers/order"
-    | "customers/register"
-    | "customers/reset_password"
-    | "gift_card"
-    | "index"
-    | "page"
-    | "password"
-    | "product"
-    | "search"
-  )[];
+  locales?: {
+    [T: string]: {
+      [V: string]: string;
+    };
+  };
   disabled_block_files?: boolean;
-};
+  generate_block_files?: string[];
+} & (
+  | {
+      enabled_on?: {
+        templates?: ShopifyTemplateTypes[];
+        groups?: string[];
+      };
+    }
+  | {
+      disabled_on?: {
+        templates?: ShopifyTemplateTypes[];
+        groups?: string[];
+      };
+    }
+);
 
 export type ShopifySettings = (
   | ({
@@ -500,8 +527,18 @@ export type _Metafield_liquid_product_reference = {
   type: "product_reference";
   value?: Omit<_Product_liquid, "metafields">;
 };
+
 export type _Metafield_liquid_list_product_reference = {
   type: "list.product_reference";
+  value?: Omit<_Product_liquid, "metafields">[];
+};
+
+export type _Metafield_liquid_collection_reference = {
+  type: "collection_reference";
+  value?: Omit<_Product_liquid, "metafields">;
+};
+export type _Metafield_liquid_list_collection_reference = {
+  type: "list.collection_reference";
   value?: Omit<_Product_liquid, "metafields">[];
 };
 
@@ -617,6 +654,8 @@ export type _Metafield_liquid =
     }
   | _Metafield_liquid_product_reference
   | _Metafield_liquid_list_product_reference
+  | _Metafield_liquid_collection_reference
+  | _Metafield_liquid_list_collection_reference
   | _Metafield_liquid_variant_reference
   | _Metafield_liquid_list_variant_reference
   | _Metafield_liquid_page_reference
