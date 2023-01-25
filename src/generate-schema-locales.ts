@@ -82,9 +82,6 @@ const generateSectionSettings = (settings, sectionLocaleCount: { [T: string]: st
         if (sectionLocaleCount[key]?.length > 1) {
           return;
         }
-        if (key === "animation") {
-          console.log(setting);
-        }
         current[`header__${headerCount++}`] = {
           content: setting?.content,
         };
