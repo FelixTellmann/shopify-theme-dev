@@ -3,6 +3,7 @@ import { Command } from "commander";
 import decache from "decache";
 import fs from "fs";
 import path from "path";
+import { toSnakeCase } from "../utils/to-snake-case";
 import { generateThemeLayout } from "./generate-theme-layout";
 import { generateThemeSnippet } from "./generate-theme-snippets";
 import { ShopifySection, ShopifySettings } from "types/shopify";
@@ -26,6 +27,130 @@ const program = new Command();
 program.version(require("./../package.json").version).parse(process.argv);
 
 const { SHOPIFY_THEME_FOLDER } = process.env;
+
+function getLocaleCount(sections: { [p: string]: ShopifySection }) {
+  const entries = {};
+
+  Object.values(sections).forEach((section) => {
+    const blocks = section.blocks?.filter((block) => block.type !== "@app") ?? [];
+    section?.settings?.forEach((setting) => {
+      if (setting.type === "paragraph" || setting.type === "header") {
+        if (setting.content.split(" ").length > 4) {
+          return;
+        }
+        const [key, value] = [toSnakeCase(setting.content), setting.content];
+        if (entries[key]) {
+          entries[key].push(value);
+        } else {
+          entries[key] = [value];
+        }
+        return;
+      }
+
+      if (setting?.id) {
+        if (setting.type === "select" || setting.type === "radio") {
+          setting.options.forEach((option, index) => {
+            const [key, value] = [toSnakeCase(option.label), option.label];
+            if (entries[key]) {
+              entries[key].push(value);
+            } else {
+              entries[key] = [value];
+            }
+          });
+        }
+        if (setting.label) {
+          const [key, value] = [toSnakeCase(setting.label), setting.label];
+          if (entries[key]) {
+            entries[key].push(value);
+          } else {
+            entries[key] = [value];
+          }
+        }
+
+        if (setting.info) {
+          if (setting.info.split(" ").length <= 4) {
+            const [key, value] = [toSnakeCase(setting.info), setting.info];
+            if (entries[key]) {
+              entries[key].push(value);
+            } else {
+              entries[key] = [value];
+            }
+          }
+        }
+        if ("placeholder" in setting && typeof setting.placeholder === "string") {
+          const [key, value] = [toSnakeCase(setting.placeholder), setting.placeholder];
+          if (entries[key]) {
+            entries[key].push(value);
+          } else {
+            entries[key] = [value];
+          }
+        }
+      }
+    });
+    blocks.forEach((block) => {
+      block?.settings?.forEach((setting) => {
+        if (setting.type === "paragraph" || setting.type === "header") {
+          if (setting.content.split(" ").length > 4) {
+            return;
+          }
+          const [key, value] = [toSnakeCase(setting.content), setting.content];
+          if (entries[key]) {
+            entries[key].push(value);
+          } else {
+            entries[key] = [value];
+          }
+          return;
+        }
+
+        if (setting?.id) {
+          if (setting.type === "select" || setting.type === "radio") {
+            setting.options.forEach((option, index) => {
+              const [key, value] = [toSnakeCase(option.label), option.label];
+              if (entries[key]) {
+                entries[key].push(value);
+              } else {
+                entries[key] = [value];
+              }
+            });
+          }
+          if (setting.label) {
+            const [key, value] = [toSnakeCase(setting.label), setting.label];
+            if (entries[key]) {
+              entries[key].push(value);
+            } else {
+              entries[key] = [value];
+            }
+          }
+
+          if (setting.info) {
+            if (setting.info.split(" ").length <= 4) {
+              const [key, value] = [toSnakeCase(setting.info), setting.info];
+              if (entries[key]) {
+                entries[key].push(value);
+              } else {
+                entries[key] = [value];
+              }
+            }
+          }
+          if ("placeholder" in setting && typeof setting.placeholder === "string") {
+            const [key, value] = [toSnakeCase(setting.placeholder), setting.placeholder];
+            if (entries[key]) {
+              entries[key].push(value);
+            } else {
+              entries[key] = [value];
+            }
+          }
+        }
+      });
+    });
+  });
+
+  /*  fs.writeFileSync(path.join(process.cwd(), "/test.json"), JSON.stringify(entries, null, 2), {
+    encoding: "utf-8",
+  });*/
+
+  return entries;
+}
 
 export const init = async () => {
   const root = process.cwd();
@@ -67,12 +192,14 @@ export const init = async () => {
         const sections = getSectionSchemas();
         const settings = getSettingsSchemas();
 
+        const sectionLocaleCount = getLocaleCount(sections);
+
         generateSectionsTypes(sections);
         updateSectionsSettings(sections);
-        generateSchemaLocales(sections, settings, SHOPIFY_THEME_FOLDER);
+        generateSchemaLocales(sections, settings, SHOPIFY_THEME_FOLDER, sectionLocaleCount);
         generateSettings(settings.settingsSchema);
         generateThemeSettings(settings.settingsSchema, SHOPIFY_THEME_FOLDER);
-        generateThemeFiles(SHOPIFY_THEME_FOLDER);
+        generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
         console.log(
           `[${chalk.gray(new Date().toLocaleTimeString())}]: [${chalk.magentaBright(
             `${Date.now() - startTime}ms`
@@ -87,8 +214,10 @@ export const init = async () => {
             delete require.cache[path];
           }
         });
+        const sections = getSectionSchemas();
+        const sectionLocaleCount = getLocaleCount(sections);
 
-        generateThemeFiles(SHOPIFY_THEME_FOLDER);
+        generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
       }
       /*const used = process.memoryUsage();
       for (const key in used) {

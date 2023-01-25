@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import fs from "fs";
 import path from "path";
-import { sectionToLiquid_WithLocalization } from "src/generate-theme-files";
+import { sectionToLiquid_WithLocalization } from "src/section-to-liquid-with-localization";
 import { toPascalCase } from "../utils/to-pascal-case";
 import { ShopifySection, ShopifySettingsInput } from "types/shopify";
 import { capitalize } from "./../utils/capitalize";
