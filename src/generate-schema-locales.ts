@@ -43,7 +43,7 @@ const generateSettings = (settings) => {
           current[setting.id] = {
             label: setting?.label,
             info: setting?.info,
-            placeholder: settings?.placeholder,
+            placeholder: setting?.placeholder,
             ...options,
           };
           return;
@@ -51,7 +51,7 @@ const generateSettings = (settings) => {
         current[setting.id] = {
           label: setting?.label,
           info: setting?.info,
-          placeholder: settings?.placeholder,
+          placeholder: setting?.placeholder,
         };
       }
     });
@@ -68,7 +68,7 @@ const generateSectionSettings = (settings, sectionLocaleCount: { [T: string]: st
   settings?.forEach((setting) => {
     settingsLocale = produce(settingsLocale, (current) => {
       if (setting.type === "paragraph") {
-        const key = toSnakeCase(settings.content);
+        const key = toSnakeCase(setting.content);
         if (sectionLocaleCount[key]?.length > 1) {
           return;
         }
@@ -78,9 +78,12 @@ const generateSectionSettings = (settings, sectionLocaleCount: { [T: string]: st
         return;
       }
       if (setting.type === "header") {
-        const key = toSnakeCase(settings.content);
+        const key = toSnakeCase(setting.content);
         if (sectionLocaleCount[key]?.length > 1) {
           return;
+        }
+        if (key === "animation") {
+          console.log(setting);
         }
         current[`header__${headerCount++}`] = {
           content: setting?.content,
