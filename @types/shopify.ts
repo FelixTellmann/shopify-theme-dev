@@ -199,6 +199,15 @@ export type ShopifyVideo_url = {
   placeholder?: string;
 };
 
+export type ShopifyVideo = {
+  id: string;
+  label: string;
+  type: "video";
+  default?: string;
+  info?: string;
+  placeholder?: string;
+};
+
 export type ShopifySettingsInput =
   | ShopifyCheckbox
   | ShopifyNumber
@@ -225,6 +234,7 @@ export type ShopifySettingsInput =
   | ShopifyRichtext
   | ShopifyInlineRichtext
   | ShopifyUrl
+  | ShopifyVideo
   | ShopifyVideo_url;
 
 type ExtractSettings<T extends ShopifySection | ShopifySectionBlock> = Extract<
