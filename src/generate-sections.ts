@@ -442,7 +442,7 @@ export const updateSectionsSettings = (sections: { [T: string]: ShopifySection }
     section.blocks?.forEach((block) => {
       if (block.type === "@app") return;
       if (
-        section.generate_block_files?.length &&
+        Array.isArray(section.generate_block_files) &&
         !section.generate_block_files.includes(block.type)
       ) {
         return;
