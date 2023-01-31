@@ -1,5 +1,5 @@
 export const toSnakeCase = (str: string) => {
-  str = str.replace(" ", "Empty Char");
+  str = str ? str.replace(" ", "Empty Char") : str;
   try {
     return (
       str &&
