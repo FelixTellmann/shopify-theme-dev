@@ -8,7 +8,7 @@ import { generateThemeLayout } from "./generate-theme-layout";
 import { generateThemeSnippet } from "./generate-theme-snippets";
 import { ShopifySection, ShopifySettings } from "types/shopify";
 import { createMetafieldTypes } from "./create-metafield-types";
-import { generateSectionsTypes, updateSectionsSettings } from "./generate-sections";
+import { generateSectionsTypes, updateSectionsSettings, writeCompareFile } from "./generate-sections";
 import { generateSettings } from "./generate-settings";
 import { generateSchemaLocales } from "./generate-schema-locales";
 import { generateThemeFiles } from "./generate-theme-files";
@@ -219,6 +219,17 @@ export const init = async () => {
 
         generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
       }
+
+      if (isAsset(name)) {
+        const assetName = name.split("\\").at(-1);
+        const assetPath = path.join(process.cwd(), SHOPIFY_THEME_FOLDER, "assets", assetName);
+
+        const rawContent = fs.readFileSync(name, {
+          encoding: "utf-8",
+        });
+
+        writeCompareFile(assetPath, rawContent);
+      }
       /*const used = process.memoryUsage();
       for (const key in used) {
         console.log(`${key} ${Math.round((used[key] / 1024 / 1024) * 100) / 100} MB`);
@@ -267,6 +278,7 @@ export const getSourcePaths = () => {
   const snippets = [];
   const layouts = [];
   const sections = [];
+  const assets = [];
 
   sourceFiles.forEach((filePath) => {
     if (isSnippet(filePath)) {
@@ -278,9 +290,12 @@ export const getSourcePaths = () => {
     if (isSection(filePath)) {
       sections.push(filePath);
     }
+    if (isAsset(filePath)) {
+      assets.push(filePath);
+    }
   });
 
-  return { snippets, layouts, sections };
+  return { snippets, layouts, sections, assets };
 };
 
 export const generateLiquidFiles = (folder: string) => {
@@ -343,6 +358,8 @@ export const isSettingUpdate = (name) =>
   /globals\\settings\\[^\\]*\.ts$/gi.test(name);
 
 export const isSection = (name) => /sections\\[^\\]*\\[^.]*\.liquid$/gi.test(name);
+
+export const isAsset = (name) => /globals\\assets\\[^\\]*$/gi.test(name);
 
 export const isSnippet = (name) =>
   /sections\\[^\\]*\\[^.]*\.[^.]*\.liquid$/gi.test(name) ||
