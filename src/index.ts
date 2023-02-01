@@ -235,6 +235,45 @@ export const init = async () => {
         console.log(`${key} ${Math.round((used[key] / 1024 / 1024) * 100) / 100} MB`);
       }*/
     });
+
+    console.log("init Trigger");
+
+    Object.keys(require.cache).forEach((path) => {
+      if (path.includes(sectionsFolder) || path.includes(globalsFolder)) {
+        decache(path);
+        delete require.cache[path];
+      }
+    });
+
+    const sections = getSectionSchemas();
+    const settings = getSettingsSchemas();
+
+    const sectionLocaleCount = getLocaleCount(sections);
+
+    generateSectionsTypes(sections);
+    updateSectionsSettings(sections);
+    generateSchemaLocales(sections, settings, SHOPIFY_THEME_FOLDER, sectionLocaleCount);
+    generateSettings(settings.settingsSchema);
+    generateThemeSettings(settings.settingsSchema, SHOPIFY_THEME_FOLDER);
+    generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
+
+    const { assets } = getSourcePaths();
+
+    for (let i = 0; i < assets.length; i++) {
+      const asset = assets[i];
+      const assetName = asset.split("\\").at(-1);
+      const assetPath = path.join(process.cwd(), SHOPIFY_THEME_FOLDER, "assets", assetName);
+
+      const rawContent = fs.readFileSync(asset, {
+        encoding: "utf-8",
+      });
+
+      writeCompareFile(assetPath, rawContent);
+    }
+    /*const used = process.memoryUsage();
+    for (const key in used) {
+      console.log(`${key} ${Math.round((used[key] / 1024 / 1024) * 100) / 100} MB`);
+    }*/
   }
 };
 
