@@ -190,7 +190,7 @@ export type ShopifyUrl = {
   info?: string;
 };
 export type ShopifyVideo_url = {
-  accept: `${string}youtube${string}` | `${string}vimeo${string}`;
+  accept: ("youtube" | "vimeo")[];
   id: string;
   label: string;
   type: "video_url";
