@@ -69,7 +69,7 @@ export const getSettingsType = (setting: ShopifySettingsInput) => {
     case "url":
       return "?: string";
     case "video_url":
-      return `?: ("youtube" | "vimeo")[]`;
+      return `?: "youtube" | "vimeo"`;
     case "font":
       return "?: string";
   }

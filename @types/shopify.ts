@@ -190,7 +190,7 @@ export type ShopifyUrl = {
   info?: string;
 };
 export type ShopifyVideo_url = {
-  accept: ("youtube" | "vimeo")[];
+  accept: "youtube" | "vimeo";
   id: string;
   label: string;
   type: "video_url";
@@ -291,7 +291,7 @@ type MapSettings<Section extends ShopifySection | ShopifySectionBlock> = {
     : ExtractSetting<Section, ID>["type"] extends "richtext"
     ? `<p${string}</p>`
     : ExtractSetting<Section, ID>["type"] extends "video_url"
-    ? ("youtube" | "vimeo")[]
+    ? "youtube" | "vimeo"
     : never;
 };
 
