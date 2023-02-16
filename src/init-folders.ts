@@ -11,7 +11,7 @@ export const initFolders = () => {
   }
 
   const shopifyPath = path.join(process.cwd(), "@types", "shopify.ts");
-  const shopifyTypesContent = fs.readFileSync(path.join(PROJECT_ROOT, "./@types/shopify.ts"), {
+  const shopifyTypesContent = fs.readFileSync(path.join(PROJECT_ROOT, "@types", "shopify.ts"), {
     encoding: "utf-8",
   });
 

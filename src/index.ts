@@ -24,7 +24,7 @@ require("dotenv").config();
 
 const program = new Command();
 
-program.version(require("./../package.json").version).parse(process.argv);
+program.version(require(path.join("./../", "package.json")).version).parse(process.argv);
 
 const { SHOPIFY_THEME_FOLDER } = process.env;
 
@@ -179,6 +179,7 @@ export const init = async () => {
 
   if (fs.existsSync(sectionsFolder) && fs.existsSync(globalsFolder)) {
     watch([sectionsFolder, globalsFolder], { recursive: true }, async (evt, name) => {
+      console.log({ name });
       const startTime = Date.now();
 
       if (isSettingUpdate(name)) {
@@ -249,6 +250,7 @@ export const init = async () => {
     console.log("init Trigger");
 
     Object.keys(require.cache).forEach((path) => {
+      console.log({ path });
       if (path.includes(sectionsFolder) || path.includes(globalsFolder)) {
         decache(path);
         delete require.cache[path];
@@ -299,6 +301,7 @@ export const init = async () => {
 export const getSectionSchemas = () => {
   const allFiles = getAllFiles();
 
+  console.log({ allFiles });
   const sections: { [T: string]: ShopifySection } = allFiles
     .filter((name) => /sections\\[^\\]*\\schema.ts$/gi.test(name))
     .reduce(
