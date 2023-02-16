@@ -325,7 +325,7 @@ export const getSectionSchemas = () => {
 
 export const getAllFiles = (basePath = "sections") => {
   return fs.readdirSync(path.join(process.cwd(), basePath)).reduce((files, file) => {
-    const name = `${basePath}\\${file}`;
+    const name = path.join(basePath, file);
     console.log(name);
     const isDirectory = fs.statSync(path.join(process.cwd(), name)).isDirectory();
     return isDirectory ? [...files, ...getAllFiles(name)] : [...files, name];
