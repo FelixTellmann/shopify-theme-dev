@@ -301,8 +301,8 @@ export const getSectionSchemas = () => {
 
   const sections: { [T: string]: ShopifySection } = allFiles
     .filter((name) => {
-      console.log(name, /sections\\[^\\]*\\schema.ts$/gi.test(name));
-      return /sections\\[^\\]*\\schema.ts$/gi.test(name);
+      console.log(name, /sections(\\|\/\/)[^\\/]*(\\|\/\/)schema.ts$/gi.test(name));
+      return /sections(\\|\/\/)[^\\/]*(\\|\/\/)schema.ts$/gi.test(name);
     })
     .reduce(
       (acc, file, index, arr) => {
