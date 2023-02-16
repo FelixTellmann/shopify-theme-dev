@@ -228,7 +228,17 @@ export const init = async () => {
           encoding: "utf-8",
         });
 
-        writeCompareFile(assetPath, rawContent);
+        // writeCompareFile(assetPath, rawContent);
+
+        if (!fs.existsSync(assetPath)) {
+          fs.writeFileSync(assetPath, rawContent);
+          console.log(
+            `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+              `Created: ${assetPath.replace(process.cwd(), "")}`
+            )}`
+          );
+          return;
+        }
       }
       /*const used = process.memoryUsage();
       for (const key in used) {
@@ -268,7 +278,16 @@ export const init = async () => {
         encoding: "utf-8",
       });
 
-      writeCompareFile(assetPath, rawContent);
+      // writeCompareFile(assetPath, rawContent);
+      if (!fs.existsSync(assetPath)) {
+        fs.writeFileSync(assetPath, rawContent);
+        console.log(
+          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+            `Created: ${assetPath.replace(process.cwd(), "")}`
+          )}`
+        );
+        return;
+      }
     }
     /*const used = process.memoryUsage();
     for (const key in used) {
