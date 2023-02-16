@@ -250,15 +250,17 @@ export const init = async () => {
     console.log("init Trigger");
 
     Object.keys(require.cache).forEach((path) => {
-      console.log({ path });
       if (path.includes(sectionsFolder) || path.includes(globalsFolder)) {
         decache(path);
         delete require.cache[path];
       }
     });
 
+    console.log("2");
     const sections = getSectionSchemas();
+    console.log("3");
     const settings = getSettingsSchemas();
+    console.log("4");
 
     const sectionLocaleCount = getLocaleCount(sections);
 
