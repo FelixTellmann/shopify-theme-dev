@@ -21,7 +21,6 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
       translationArray.push(process.env.SHOPIFY_SECTIONS_BEFORE_RENDER);
     }
 
-    console.log("6.1");
     const rawContent = fs.readFileSync(
       path.join(process.cwd(), "sections", toKebabCase(key), `${toKebabCase(key)}.liquid`),
       {
@@ -29,7 +28,6 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
       }
     );
 
-    console.log("6.2");
     if (rawContent) {
       const translatedContent = rawContent.replace(
         /<t(\s+[^>]*)*>((.|\r|\n)*?)<\/t>/gi,
@@ -69,19 +67,17 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
       );
       translationArray.push(translatedContent);
     }
-    console.log("6.3");
     if (process.env.SHOPIFY_SECTIONS_AFTER_RENDER) {
       translationArray.push(process.env.SHOPIFY_SECTIONS_AFTER_RENDER);
     }
-    console.log("6.4");
     translationArray.push(sectionToLiquid_WithLocalization(section, key, sectionLocaleCount));
-    console.log("6.5");
     writeCompareFile(sectionPath, translationArray.join("\n"));
   }
 
   for (let i = 0; i < snippets.length; i++) {
     const snippet = snippets[i];
-    const snippetName = snippet.split("\\").at(-1);
+    const snippetName = snippet.split(/[\\/]/gi).at(-1);
+    console.log(snippetName);
     const snippetPath = path.join(process.cwd(), folder, "snippets", snippetName);
 
     const returnArr = [];
