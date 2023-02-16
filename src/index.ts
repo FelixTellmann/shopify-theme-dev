@@ -303,7 +303,8 @@ export const getSectionSchemas = () => {
   const sections: { [T: string]: ShopifySection } = allFiles
     .filter((name) => /sections\\[^\\]*\\schema.ts$/gi.test(name))
     .reduce(
-      (acc, file) => {
+      (acc, file, index, arr) => {
+        console.log(arr);
         try {
           const filename = path.join(process.cwd(), file);
           const data = require(filename);
