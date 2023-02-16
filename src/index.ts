@@ -221,7 +221,7 @@ export const init = async () => {
       }
 
       if (isAsset(name)) {
-        const assetName = name.split("\\").at(-1);
+        const assetName = name.split(/[\\/]/gi).at(-1);
         const assetPath = path.join(process.cwd(), SHOPIFY_THEME_FOLDER, "assets", assetName);
 
         const rawContent = fs.readFileSync(name, {
@@ -277,7 +277,7 @@ export const init = async () => {
     console.log("8");
     for (let i = 0; i < assets.length; i++) {
       const asset = assets[i];
-      const assetName = asset.split("\\").at(-1);
+      const assetName = asset.split(/[\\/]/gi).at(-1);
       const assetPath = path.join(process.cwd(), SHOPIFY_THEME_FOLDER, "assets", assetName);
 
       const rawContent = fs.readFileSync(asset, {
@@ -372,7 +372,7 @@ export const generateLiquidFiles = (folder: string) => {
   for (let i = 0; i < source.length; i++) {
     if (isSnippet(source[i])) {
       console.log(source[i], "source[i]");
-      const fileName = source[i].split("\\").at(-1);
+      const fileName = source[i].split(/[\\/]/gi).at(-1);
       const targetFile = target.find((targetPath) => targetPath.includes(`snippets\\${fileName}`));
 
       if (!targetFile) {
@@ -380,7 +380,7 @@ export const generateLiquidFiles = (folder: string) => {
       }
     }
     if (isLayout(source[i])) {
-      const fileName = source[i].split("\\").at(-1);
+      const fileName = source[i].split(/[\\/]/gi).at(-1);
       const targetFile = target.find((targetPath) => targetPath.includes(`layout\\${fileName}`));
 
       if (!targetFile) {
@@ -394,8 +394,10 @@ export const generateLiquidFiles = (folder: string) => {
       /sections[\\/][^\\/]*\.liquid$/gi.test(target[i]) ||
       /snippets[\\/][^\\/]*\.liquid$/gi.test(target[i])
     ) {
-      const fileName = target[i].split("\\").at(-1);
-      const targetFile = source.find((sourcePath) => sourcePath.includes(`\\${fileName}`));
+      const fileName = target[i].split(/[\\/]/gi).at(-1);
+      const targetFile = source.find((sourcePath) =>
+        sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
+      );
       if (!targetFile) {
         console.log(
           `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(
@@ -406,8 +408,11 @@ export const generateLiquidFiles = (folder: string) => {
       }
     }
     if (/layout[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
-      const fileName = target[i].split("\\").at(-1);
-      const targetFile = source.find((sourcePath) => sourcePath.includes(`\\layout\\${fileName}`));
+      const fileName = target[i].split(/[\\/]/gi).at(-1);
+      const targetFile = source.find(
+        (sourcePath) =>
+          sourcePath.includes(`layout\\${fileName}`) || sourcePath.includes(`layout/${fileName}`)
+      );
       if (!targetFile) {
         console.log(
           `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(

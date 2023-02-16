@@ -32,7 +32,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
       const translatedContent = rawContent.replace(
         /<t(\s+[^>]*)*>((.|\r|\n)*?)<\/t>/gi,
         (str, group1, group2) => {
-          const group = toSnakeCase(sectionPath.split("\\").at(-1).split(".").at(0)).trim();
+          const group = toSnakeCase(sectionPath.split(/[\\/]/gi).at(-1).split(".").at(0)).trim();
           const content = toSnakeCase(group2?.split(" ")?.slice(0, 2)?.join("_") ?? "").trim();
           const backupContent = toSnakeCase(group2).trim();
           const id = toSnakeCase(group1?.replace(/id="(.*)"/gi, "$1") ?? "").trim();
@@ -90,7 +90,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
       const translatedContent = rawContent.replace(
         /<t(\s+[^>]*)*>((.|\r|\n)*?)<\/t>/gi,
         (str, group1, group2) => {
-          const group = toSnakeCase(snippet.split("\\").at(-1).split(".").at(0)).trim();
+          const group = toSnakeCase(snippet.split(/[\\/]/gi).at(-1).split(".").at(0)).trim();
           const content = toSnakeCase(group2?.split(" ")?.slice(0, 2)?.join("_") ?? "").trim();
           const backupContent = toSnakeCase(group2).trim();
           const id = toSnakeCase(group1?.replace(/id="(.*)"/gi, "$1") ?? "").trim();
@@ -131,7 +131,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
 
   for (let i = 0; i < layouts.length; i++) {
     const layout = layouts[i];
-    const layoutName = layout.split("\\").at(-1);
+    const layoutName = layout.split(/[\\/]/gi).at(-1);
     const layoutPath = path.join(process.cwd(), folder, "layout", layoutName);
 
     const returnArr = [];
@@ -144,7 +144,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
       const translatedContent = rawContent.replace(
         /<t(\s+[^>]*)*>((.|\r|\n)*?)<\/t>/gi,
         (str, group1, group2) => {
-          const group = toSnakeCase(layout.split("\\").at(-1).split(".").at(0)).trim();
+          const group = toSnakeCase(layout.split(/[\\/]/gi).at(-1).split(".").at(0)).trim();
           const content = toSnakeCase(group2?.split(" ")?.slice(0, 2)?.join("_") ?? "").trim();
           const backupContent = toSnakeCase(group2).trim();
           const id = toSnakeCase(group1?.replace(/id="(.*)"/gi, "$1") ?? "").trim();
@@ -190,8 +190,10 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
 
   for (let i = 0; i < target.length; i++) {
     if (/snippets[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
-      const fileName = target[i].split("\\").at(-1);
-      const targetFile = snippets.find((sourcePath) => sourcePath.includes(`\\${fileName}`));
+      const fileName = target[i].split(/[\\/]/gi).at(-1);
+      const targetFile = snippets.find((sourcePath) =>
+        sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
+      );
       if (!targetFile) {
         console.log(
           `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(
@@ -203,8 +205,10 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
     }
 
     if (/sections[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
-      const fileName = target[i].split("\\").at(-1);
-      const targetFile = sections.find((sourcePath) => sourcePath.includes(`\\${fileName}`));
+      const fileName = target[i].split(/[\\/]/gi).at(-1);
+      const targetFile = sections.find((sourcePath) =>
+        sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
+      );
       if (!targetFile) {
         console.log(
           `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(
@@ -216,8 +220,10 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
     }
 
     if (/layout[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
-      const fileName = target[i].split("\\").at(-1);
-      const targetFile = layouts.find((sourcePath) => sourcePath.includes(`\\${fileName}`));
+      const fileName = target[i].split(/[\\/]/gi).at(-1);
+      const targetFile = layouts.find((sourcePath) =>
+        sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
+      );
       if (!targetFile) {
         console.log(
           `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(

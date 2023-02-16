@@ -15,7 +15,7 @@ export const generateThemeLayout = (layoutPath, folder: string) => {
     .filter((name) => /sections[\\/][^\\/]*[\\/][^.]*\.[^.]*\.liquid$/gi.test(name))
     .forEach((snippet) => {});*/
 
-  const targetPath = path.join(process.cwd(), folder, "layout", layoutPath.split("\\").at(-1));
+  const targetPath = path.join(process.cwd(), folder, "layout", layoutPath.split(/[\\/]/gi).at(-1));
   const layoutContent = fs.readFileSync(layoutPath, {
     encoding: "utf-8",
   });

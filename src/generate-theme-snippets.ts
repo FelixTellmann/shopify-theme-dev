@@ -9,7 +9,12 @@ import { ShopifySection } from "types/shopify";
 import { toKebabCase } from "./../utils/to-kebab-case";
 
 export const generateThemeSnippet = (snippetPath, folder: string) => {
-  const targetPath = path.join(process.cwd(), folder, "snippets", snippetPath.split("\\").at(-1));
+  const targetPath = path.join(
+    process.cwd(),
+    folder,
+    "snippets",
+    snippetPath.split(/[\\/]/gi).at(-1)
+  );
   const snippetContent = fs.readFileSync(snippetPath, {
     encoding: "utf-8",
   });
