@@ -373,7 +373,11 @@ export const generateLiquidFiles = (folder: string) => {
     if (isSnippet(source[i])) {
       console.log(source[i], "source[i]");
       const fileName = source[i].split(/[\\/]/gi).at(-1);
-      const targetFile = target.find((targetPath) => targetPath.includes(`snippets\\${fileName}`));
+      const targetFile = target.find(
+        (targetPath) =>
+          targetPath.includes(`snippets\\${fileName}`) ||
+          targetPath.includes(`snippets/${fileName}`)
+      );
 
       if (!targetFile) {
         generateThemeSnippet(source[i], folder);
@@ -381,7 +385,10 @@ export const generateLiquidFiles = (folder: string) => {
     }
     if (isLayout(source[i])) {
       const fileName = source[i].split(/[\\/]/gi).at(-1);
-      const targetFile = target.find((targetPath) => targetPath.includes(`layout\\${fileName}`));
+      const targetFile = target.find(
+        (targetPath) =>
+          targetPath.includes(`layout\\${fileName}`) || targetPath.includes(`layout/${fileName}`)
+      );
 
       if (!targetFile) {
         generateThemeLayout(source[i], folder);
@@ -432,10 +439,10 @@ export const isSettingUpdate = (name) =>
 
 export const isSection = (name) => /sections[\\/][^\\/]*[\\/][^.]*\.liquid$/gi.test(name);
 
-export const isAsset = (name) => /globals\\assets[\\/][^\\/]*$/gi.test(name);
+export const isAsset = (name) => /globals[\\/]assets[\\/][^\\/]*$/gi.test(name);
 
 export const isSnippet = (name) =>
   /sections[\\/][^\\/]*[\\/][^.]*\.[^.]*\.liquid$/gi.test(name) ||
-  /globals\\snippets[\\/][^\\/]*\.liquid$/gi.test(name);
+  /globals[\\/]snippets[\\/][^\\/]*\.liquid$/gi.test(name);
 
-export const isLayout = (name) => /globals\\layout[\\/][^\\/]*\.liquid$/gi.test(name);
+export const isLayout = (name) => /globals[\\/]layout[\\/][^\\/]*\.liquid$/gi.test(name);
