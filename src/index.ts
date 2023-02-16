@@ -266,7 +266,7 @@ export const init = async () => {
     generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
 
     const { assets } = getSourcePaths();
-    console.log("8");
+
     for (let i = 0; i < assets.length; i++) {
       const asset = assets[i];
       const assetName = asset.split(/[\\/]/gi).at(-1);
