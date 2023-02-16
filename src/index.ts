@@ -179,7 +179,6 @@ export const init = async () => {
 
   if (fs.existsSync(sectionsFolder) && fs.existsSync(globalsFolder)) {
     watch([sectionsFolder, globalsFolder], { recursive: true }, async (evt, name) => {
-      console.log({ name });
       const startTime = Date.now();
 
       if (isSettingUpdate(name)) {
@@ -301,10 +300,12 @@ export const getSectionSchemas = () => {
   const allFiles = getAllFiles();
 
   const sections: { [T: string]: ShopifySection } = allFiles
-    .filter((name) => /sections\\[^\\]*\\schema.ts$/gi.test(name))
+    .filter((name) => {
+      console.log(name, /sections\\[^\\]*\\schema.ts$/gi.test(name));
+      return /sections\\[^\\]*\\schema.ts$/gi.test(name);
+    })
     .reduce(
       (acc, file, index, arr) => {
-        console.log(allFiles.lengt, arr.length);
         try {
           const filename = path.join(process.cwd(), file);
           const data = require(filename);
