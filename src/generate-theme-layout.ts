@@ -10,9 +10,9 @@ import { toKebabCase } from "./../utils/to-kebab-case";
 
 export const generateThemeLayout = (layoutPath, folder: string) => {
   const sectionSnippets = getAllFiles("sections");
-  const globalSnippets = getAllFiles("globals\\snippets");
+  const globalSnippets = getAllFiles(path.join("globals", "snippets"));
   /*sectionSnippets
-    .filter((name) => /sections\\[^\\]*\\[^.]*\.[^.]*\.liquid$/gi.test(name))
+    .filter((name) => /sections[\\/][^\\/]*[\\/][^.]*\.[^.]*\.liquid$/gi.test(name))
     .forEach((snippet) => {});*/
 
   const targetPath = path.join(process.cwd(), folder, "layout", layoutPath.split("\\").at(-1));

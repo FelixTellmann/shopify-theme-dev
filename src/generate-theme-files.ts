@@ -191,7 +191,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
   const target = getAllFiles(folder);
 
   for (let i = 0; i < target.length; i++) {
-    if (/snippets\\[^\\]*\.liquid$/gi.test(target[i])) {
+    if (/snippets[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
       const fileName = target[i].split("\\").at(-1);
       const targetFile = snippets.find((sourcePath) => sourcePath.includes(`\\${fileName}`));
       if (!targetFile) {
@@ -204,7 +204,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
       }
     }
 
-    if (/sections\\[^\\]*\.liquid$/gi.test(target[i])) {
+    if (/sections[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
       const fileName = target[i].split("\\").at(-1);
       const targetFile = sections.find((sourcePath) => sourcePath.includes(`\\${fileName}`));
       if (!targetFile) {
@@ -217,7 +217,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
       }
     }
 
-    if (/layout\\[^\\]*\.liquid$/gi.test(target[i])) {
+    if (/layout[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
       const fileName = target[i].split("\\").at(-1);
       const targetFile = layouts.find((sourcePath) => sourcePath.includes(`\\${fileName}`));
       if (!targetFile) {

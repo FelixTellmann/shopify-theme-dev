@@ -301,8 +301,8 @@ export const getSectionSchemas = () => {
 
   const sections: { [T: string]: ShopifySection } = allFiles
     .filter((name) => {
-      console.log(name, /sections(\\|\/\/)[^\\/]*(\\|\/\/)schema.ts$/gi.test(name));
-      return /sections(\\|\/\/)[^\\/]*(\\|\/\/)schema.ts$/gi.test(name);
+      console.log(name, /sections([\\/])[^\\/]*([\\/])schema.ts$/gi.test(name));
+      return /sections([\\/])[^\\/]*([\\/])schema.ts$/gi.test(name);
     })
     .reduce(
       (acc, file, index, arr) => {
@@ -366,6 +366,7 @@ export const generateLiquidFiles = (folder: string) => {
 
   for (let i = 0; i < source.length; i++) {
     if (isSnippet(source[i])) {
+      console.log(source[i], "source[i]");
       const fileName = source[i].split("\\").at(-1);
       const targetFile = target.find((targetPath) => targetPath.includes(`snippets\\${fileName}`));
 
@@ -385,8 +386,8 @@ export const generateLiquidFiles = (folder: string) => {
 
   for (let i = 0; i < target.length; i++) {
     if (
-      /sections\\[^\\]*\.liquid$/gi.test(target[i]) ||
-      /snippets\\[^\\]*\.liquid$/gi.test(target[i])
+      /sections[\\/][^\\/]*\.liquid$/gi.test(target[i]) ||
+      /snippets[\\/][^\\/]*\.liquid$/gi.test(target[i])
     ) {
       const fileName = target[i].split("\\").at(-1);
       const targetFile = source.find((sourcePath) => sourcePath.includes(`\\${fileName}`));
@@ -399,7 +400,7 @@ export const generateLiquidFiles = (folder: string) => {
         fs.unlinkSync(path.join(process.cwd(), target[i]));
       }
     }
-    if (/layout\\[^\\]*\.liquid$/gi.test(target[i])) {
+    if (/layout[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
       const fileName = target[i].split("\\").at(-1);
       const targetFile = source.find((sourcePath) => sourcePath.includes(`\\layout\\${fileName}`));
       if (!targetFile) {
@@ -415,16 +416,16 @@ export const generateLiquidFiles = (folder: string) => {
 };
 
 export const isSettingUpdate = (name) =>
-  /sections\\[^\\]*\\schema.ts$/gi.test(name) ||
+  /sections[\\/][^\\/]*\\schema.ts$/gi.test(name) ||
   /globals\\settings_schema\.ts$/gi.test(name) ||
-  /globals\\settings\\[^\\]*\.ts$/gi.test(name);
+  /globals\\settings[\\/][^\\/]*\.ts$/gi.test(name);
 
-export const isSection = (name) => /sections\\[^\\]*\\[^.]*\.liquid$/gi.test(name);
+export const isSection = (name) => /sections[\\/][^\\/]*[\\/][^.]*\.liquid$/gi.test(name);
 
-export const isAsset = (name) => /globals\\assets\\[^\\]*$/gi.test(name);
+export const isAsset = (name) => /globals\\assets[\\/][^\\/]*$/gi.test(name);
 
 export const isSnippet = (name) =>
-  /sections\\[^\\]*\\[^.]*\.[^.]*\.liquid$/gi.test(name) ||
-  /globals\\snippets\\[^\\]*\.liquid$/gi.test(name);
+  /sections[\\/][^\\/]*[\\/][^.]*\.[^.]*\.liquid$/gi.test(name) ||
+  /globals\\snippets[\\/][^\\/]*\.liquid$/gi.test(name);
 
-export const isLayout = (name) => /globals\\layout\\[^\\]*\.liquid$/gi.test(name);
+export const isLayout = (name) => /globals\\layout[\\/][^\\/]*\.liquid$/gi.test(name);
