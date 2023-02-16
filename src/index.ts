@@ -304,7 +304,7 @@ export const getSectionSchemas = () => {
     .filter((name) => /sections\\[^\\]*\\schema.ts$/gi.test(name))
     .reduce(
       (acc, file, index, arr) => {
-        console.log(arr);
+        console.log(allFiles.lengt, arr.length);
         try {
           const filename = path.join(process.cwd(), file);
           const data = require(filename);
