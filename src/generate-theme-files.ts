@@ -77,7 +77,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
   for (let i = 0; i < snippets.length; i++) {
     const snippet = snippets[i];
     const snippetName = snippet.split(/[\\/]/gi).at(-1);
-    console.log(snippetName);
+
     const snippetPath = path.join(process.cwd(), folder, "snippets", snippetName);
 
     const returnArr = [];
