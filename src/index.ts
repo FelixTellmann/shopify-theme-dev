@@ -257,18 +257,24 @@ export const init = async () => {
 
     const sections = getSectionSchemas();
     const settings = getSettingsSchemas();
-
+    console.log("0");
     const sectionLocaleCount = getLocaleCount(sections);
-
+    console.log("1");
     generateSectionsTypes(sections);
+    console.log("2");
     updateSectionsSettings(sections);
+    console.log("3");
     generateSchemaLocales(sections, settings, SHOPIFY_THEME_FOLDER, sectionLocaleCount);
+    console.log("4");
     generateSettings(settings.settingsSchema);
+    console.log("5");
     generateThemeSettings(settings.settingsSchema, SHOPIFY_THEME_FOLDER);
+    console.log("6");
     generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
+    console.log("7");
 
     const { assets } = getSourcePaths();
-
+    console.log("8");
     for (let i = 0; i < assets.length; i++) {
       const asset = assets[i];
       const assetName = asset.split("\\").at(-1);
@@ -301,7 +307,6 @@ export const getSectionSchemas = () => {
 
   const sections: { [T: string]: ShopifySection } = allFiles
     .filter((name) => {
-      console.log(name, /sections([\\/])[^\\/]*([\\/])schema.ts$/gi.test(name));
       return /sections([\\/])[^\\/]*([\\/])schema.ts$/gi.test(name);
     })
     .reduce(
