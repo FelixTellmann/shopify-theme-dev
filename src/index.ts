@@ -256,11 +256,8 @@ export const init = async () => {
       }
     });
 
-    console.log("2");
     const sections = getSectionSchemas();
-    console.log("3");
     const settings = getSettingsSchemas();
-    console.log("4");
 
     const sectionLocaleCount = getLocaleCount(sections);
 
@@ -303,7 +300,6 @@ export const init = async () => {
 export const getSectionSchemas = () => {
   const allFiles = getAllFiles();
 
-  console.log({ allFiles });
   const sections: { [T: string]: ShopifySection } = allFiles
     .filter((name) => /sections\\[^\\]*\\schema.ts$/gi.test(name))
     .reduce(
@@ -326,7 +322,7 @@ export const getSectionSchemas = () => {
 export const getAllFiles = (basePath = "sections") => {
   return fs.readdirSync(path.join(process.cwd(), basePath)).reduce((files, file) => {
     const name = path.join(basePath, file);
-    console.log(name);
+
     const isDirectory = fs.statSync(path.join(process.cwd(), name)).isDirectory();
     return isDirectory ? [...files, ...getAllFiles(name)] : [...files, name];
   }, []);
