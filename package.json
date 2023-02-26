@@ -5,7 +5,8 @@
   "author": "Felix Tellmann",
   "license": "MIT",
   "bin": {
-    "shopify-theme-dev": "shopify-theme-dev.ts"
+    "shopify-theme-dev": "shopify-theme-dev.ts",
+    "shopify-app-dev": "shopify-app-dev.ts"
   },
   "main": "./index.ts",
   "scripts": {
