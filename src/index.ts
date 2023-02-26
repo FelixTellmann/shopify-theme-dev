@@ -15,7 +15,7 @@ import { generateThemeFiles } from "./generate-theme-files";
 import { generateThemeSettings } from "./generate-theme-settings";
 
 import { copyFiles } from "./init-copy-files";
-import { initFolders } from "./init-folders";
+import { initShopifyTypes } from "./init-shopify-types";
 import { initThemeFolders } from "./init-theme-folders";
 
 const watch = require("node-watch");
@@ -28,7 +28,7 @@ program.version(require(path.join("./../", "package.json")).version).parse(proce
 
 const { SHOPIFY_THEME_FOLDER } = process.env;
 
-function getLocaleCount(sections: { [p: string]: ShopifySection }) {
+export function getLocaleCount(sections: { [p: string]: ShopifySection }) {
   const entries = {};
 
   Object.values(sections).forEach((section) => {
@@ -162,7 +162,7 @@ export const init = async () => {
       `Shopify CMS Started`
     )}`
   );
-  initFolders();
+  initShopifyTypes();
 
   if (!SHOPIFY_THEME_FOLDER) return;
 

@@ -59,7 +59,10 @@ const generateSettings = (settings) => {
   return settingsLocale;
 };
 
-const generateSectionSettings = (settings, sectionLocaleCount: { [T: string]: string[] }) => {
+export const generateSectionSettings = (
+  settings,
+  sectionLocaleCount: { [T: string]: string[] }
+) => {
   if (!settings) return undefined;
   let settingsLocale = {};
   let paragraphCount = 1;

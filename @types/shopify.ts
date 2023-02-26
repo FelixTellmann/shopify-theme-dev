@@ -240,7 +240,7 @@ export type ShopifySettingsInput =
 type ExtractSettings<T extends ShopifySection | ShopifySectionBlock> = Extract<
   /* @ts-ignore*/
   T["settings"][number],
-  { id: string; type }
+  { id: string; type: string }
 >;
 
 type ExtractSetting<T extends ShopifySection | ShopifySectionBlock, ID extends string> = Extract<
@@ -306,7 +306,7 @@ type MapSection<T> = {
 };
 
 type MapBlocks<T extends { blocks: ShopifySectionBlock[] }> = {
-  [B in Extract<T["blocks"][number], { type }>["type"]]: {
+  [B in Extract<T["blocks"][number], { type: string }>["type"]]: {
     id: string;
     settings: MapSettings<Extract<T["blocks"][number], { type: B }>>;
     type: B;
@@ -314,7 +314,7 @@ type MapBlocks<T extends { blocks: ShopifySectionBlock[] }> = {
 };
 
 type MapBlocksPreset<T extends { blocks: ShopifySectionBlock[] }> = {
-  [B in Extract<T["blocks"][number], { type }>["type"]]: {
+  [B in Extract<T["blocks"][number], { type: string }>["type"]]: {
     type: B;
     settings?: Partial<MapSettings<Extract<T["blocks"][number], { type: B }>>>;
   };
@@ -389,6 +389,45 @@ export type ShopifySection<T = never> = {
   };
   disabled_block_files?: boolean;
   generate_block_files?: string[];
+} & (
+  | {
+      enabled_on?: {
+        templates?: ShopifyTemplateTypes[];
+        groups?: string[];
+      };
+    }
+  | {
+      disabled_on?: {
+        templates?: ShopifyTemplateTypes[];
+        groups?: string[];
+      };
+    }
+);
+
+type ShopifyAppBlockDefault<T = never> = {
+  settings?: T extends never
+    ? { [T: string]: string | number | boolean } | undefined
+    : T extends { settings: any }
+    ? Partial<T["settings"]> | undefined
+    : { [T: string]: string | number | boolean } | undefined;
+};
+
+export type ShopifyAppBlock<T = never> = {
+  name: string;
+  target: "section" | "head" | "body";
+  class?: string;
+  default?: ShopifyAppBlockDefault<T>;
+  /* Max Settings: 25 - Max Content blocks: 6*/
+  settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
+  tag?: "article" | "aside" | "div" | "footer" | "header" | "section";
+  locales?: {
+    [T: string]: {
+      [V: string]: string;
+    };
+  };
+  javascript?: string;
+  stylesheet?: string;
+  available_if?: `{{ app.metafields.${string}.${string} }}`;
 } & (
   | {
       enabled_on?: {
