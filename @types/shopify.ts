@@ -172,7 +172,14 @@ export type ShopifyRichtext = {
   id: string;
   label: string;
   type: "richtext";
-  default?: `<p${string}</p>`;
+  default?:
+    | `<p${string}</p>`
+    | `<h1${string}</h1>`
+    | `<h2${string}</h2>`
+    | `<h3${string}</h3>`
+    | `<h4${string}</h4>`
+    | `<h5${string}</h5>`
+    | `<h6${string}</h6>`;
   info?: string;
 };
 export type ShopifyInlineRichtext = {
@@ -289,7 +296,14 @@ type MapSettings<Section extends ShopifySection | ShopifySectionBlock> = {
     : ExtractSetting<Section, ID>["type"] extends "product_list"
     ? _Product_liquid[]
     : ExtractSetting<Section, ID>["type"] extends "richtext"
-    ? `<p${string}</p>`
+    ?
+        | `<p${string}</p>`
+        | `<h1${string}</h1>`
+        | `<h2${string}</h2>`
+        | `<h3${string}</h3>`
+        | `<h4${string}</h4>`
+        | `<h5${string}</h5>`
+        | `<h6${string}</h6>`
     : ExtractSetting<Section, ID>["type"] extends "video_url"
     ? `${string}youtube${string}` | `${string}vimeo${string}`
     : never;

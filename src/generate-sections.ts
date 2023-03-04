@@ -63,7 +63,7 @@ export const getSettingsType = (setting: ShopifySettingsInput) => {
     case "product_list":
       return "?: _Product_liquid[]";
     case "richtext":
-      return "?: `<p${string}</p>`";
+      return "?: `<p${string}</p>` | `<h1${string}</h1>` | `<h2${string}</h2>` | `<h3${string}</h3>` | `<h4${string}</h4>` | `<h5${string}</h5>` | `<h6${string}</h6>`";
     case "inline_richtext":
       return "?: string";
     case "url":
