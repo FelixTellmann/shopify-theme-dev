@@ -63,7 +63,7 @@ export const getSettingsType = (setting: ShopifySettingsInput) => {
     case "product_list":
       return "?: _Product_liquid[]";
     case "richtext":
-      return "?: `<p${string}</p>` | `<h1${string}</h1>` | `<h2${string}</h2>` | `<h3${string}</h3>` | `<h4${string}</h4>` | `<h5${string}</h5>` | `<h6${string}</h6>`";
+      return "?: `<${_BlockTag}${string}</${_BlockTag}>`";
     case "inline_richtext":
       return "?: string";
     case "url":
@@ -79,6 +79,10 @@ export const getImports = (sections: { [T: string]: ShopifySection }) => {
   const localTypes = [];
 
   const analyseSetting = (setting) => {
+    if (setting.type === "richtext") {
+      if (localTypes.includes("_BlockTag")) return;
+      localTypes.push("_BlockTag");
+    }
     if (setting.type === "article") {
       if (localTypes.includes("_Article_liquid")) return;
       localTypes.push("_Article_liquid");

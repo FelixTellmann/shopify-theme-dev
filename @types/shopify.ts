@@ -172,14 +172,7 @@ export type ShopifyRichtext = {
   id: string;
   label: string;
   type: "richtext";
-  default?:
-    | `<p${string}</p>`
-    | `<h1${string}</h1>`
-    | `<h2${string}</h2>`
-    | `<h3${string}</h3>`
-    | `<h4${string}</h4>`
-    | `<h5${string}</h5>`
-    | `<h6${string}</h6>`;
+  default?: `<${_BlockTag}${string}</${_BlockTag}>`;
   info?: string;
 };
 export type ShopifyInlineRichtext = {
@@ -296,18 +289,13 @@ type MapSettings<Section extends ShopifySection | ShopifySectionBlock> = {
     : ExtractSetting<Section, ID>["type"] extends "product_list"
     ? _Product_liquid[]
     : ExtractSetting<Section, ID>["type"] extends "richtext"
-    ?
-        | `<p${string}</p>`
-        | `<h1${string}</h1>`
-        | `<h2${string}</h2>`
-        | `<h3${string}</h3>`
-        | `<h4${string}</h4>`
-        | `<h5${string}</h5>`
-        | `<h6${string}</h6>`
+    ? `<${_BlockTag}${string}</${_BlockTag}>`
     : ExtractSetting<Section, ID>["type"] extends "video_url"
     ? `${string}youtube${string}` | `${string}vimeo${string}`
     : never;
 };
+
+export type _BlockTag = "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "ol" | "ul";
 
 type MapSection<T> = {
   // @ts-ignore
