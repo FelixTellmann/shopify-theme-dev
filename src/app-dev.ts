@@ -531,34 +531,36 @@ export const generateAppFiles = (srcFolder, outFolder, appBlockSchemas, sectionL
 
   const target = getAllAppFiles(path.join("extensions", outFolder));
 
-  for (let i = 0; i < target.length; i++) {
-    if (/snippets[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
-      const fileName = target[i].split(/[\\/]/gi).at(-1);
-      const targetFile = snippets.find((sourcePath) =>
-        sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
-      );
-      if (!targetFile) {
-        console.log(
-          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(
-            `Deleted: ${target[i]}`
-          )}`
+  if (process.env.SHOPIFY_CMS_DELETE) {
+    for (let i = 0; i < target.length; i++) {
+      if (/snippets[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
+        const fileName = target[i].split(/[\\/]/gi).at(-1);
+        const targetFile = snippets.find((sourcePath) =>
+          sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
         );
-        fs.unlinkSync(path.join(process.cwd(), target[i]));
+        if (!targetFile) {
+          console.log(
+            `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(
+              `Deleted: ${target[i]}`
+            )}`
+          );
+          fs.unlinkSync(path.join(process.cwd(), target[i]));
+        }
       }
-    }
 
-    if (/blocks[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
-      const fileName = target[i].split(/[\\/]/gi).at(-1);
-      const targetFile = blocks.find((sourcePath) =>
-        sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
-      );
-      if (!targetFile) {
-        console.log(
-          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(
-            `Deleted: ${target[i]}`
-          )}`
+      if (/blocks[\\/][^\\/]*\.liquid$/gi.test(target[i])) {
+        const fileName = target[i].split(/[\\/]/gi).at(-1);
+        const targetFile = blocks.find((sourcePath) =>
+          sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
         );
-        fs.unlinkSync(path.join(process.cwd(), target[i]));
+        if (!targetFile) {
+          console.log(
+            `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(
+              `Deleted: ${target[i]}`
+            )}`
+          );
+          fs.unlinkSync(path.join(process.cwd(), target[i]));
+        }
       }
     }
   }
