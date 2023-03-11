@@ -288,6 +288,47 @@ export const generateSectionsTypes = (sections: { [T: string]: ShopifySection })
 };
 
 export const writeCompareFile = (path: string, content: string) => {
+  const ignoreSNIPPETS = process.env.SHOPIFY_CMS_IGNORE_SNIPPETS?.split(",");
+  const ignoreLAYOUTS = process.env.SHOPIFY_CMS_IGNORE_LAYOUTS?.split(",");
+  const ignoreSECTIONS = process.env.SHOPIFY_CMS_IGNORE_SECTIONS?.split(",");
+  const ignoreASSETS = process.env.SHOPIFY_CMS_IGNORE_ASSETS?.split(",");
+
+  if (/[/\\]snippets[/\\]/gi.test(path) && ignoreSNIPPETS?.includes(path.split(/[/\\]/)?.at(-1))) {
+    console.log(
+      `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.greenBright(
+        `Ignored: ${path.replace(process.cwd(), "")}`
+      )}`
+    );
+    return;
+  }
+
+  if (/[/\\]layout[/\\]/gi.test(path) && ignoreLAYOUTS?.includes(path.split(/[/\\]/)?.at(-1))) {
+    console.log(
+      `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.greenBright(
+        `Ignored: ${path.replace(process.cwd(), "")}`
+      )}`
+    );
+    return;
+  }
+
+  if (/[/\\]sections[/\\]/gi.test(path) && ignoreSECTIONS?.includes(path.split(/[/\\]/)?.at(-1))) {
+    console.log(
+      `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.greenBright(
+        `Ignored: ${path.replace(process.cwd(), "")}`
+      )}`
+    );
+    return;
+  }
+
+  if (/[/\\]assets[/\\]/gi.test(path) && ignoreASSETS?.includes(path.split(/[/\\]/)?.at(-1))) {
+    console.log(
+      `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.greenBright(
+        `Ignored: ${path.replace(process.cwd(), "")}`
+      )}`
+    );
+    return;
+  }
+
   if (!fs.existsSync(path)) {
     fs.writeFileSync(path, content);
     console.log(
