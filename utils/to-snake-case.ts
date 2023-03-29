@@ -1,4 +1,8 @@
 export const toSnakeCase = (str: string) => {
+
+  if (typeof str === "number") {
+    str = `${str}`;
+  }
   str = str ? str.replace(" ", "Empty Char") : str;
   try {
     return (
