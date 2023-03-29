@@ -24,7 +24,7 @@ export type ShopifyNumber = {
   type: "number";
   default?: number;
   info?: string;
-  placeholder?: number;
+  placeholder?: string;
 };
 export type ShopifyRadio = {
   id: string;
