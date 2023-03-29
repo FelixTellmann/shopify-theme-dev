@@ -453,6 +453,10 @@ export const generateAppFiles = (srcFolder, outFolder, appBlockSchemas, sectionL
             }
           }
 
+          if (translations[group][content] === group2) {
+            return `{{ "${group}.${content}" | t }}`;
+          }
+
           return group2;
         }
       );
@@ -509,6 +513,10 @@ export const generateAppFiles = (srcFolder, outFolder, appBlockSchemas, sectionL
               translations[group][`${content}_2`] = group2;
               return `{{ "${group}.${content}_2" | t }}`;
             }
+          }
+
+          if (translations[group][content] === group2) {
+            return `{{ "${group}.${content}" | t }}`;
           }
 
           return group2;

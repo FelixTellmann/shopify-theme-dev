@@ -62,6 +62,10 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
             }
           }
 
+          if (translations[group][content] === group2) {
+            return `{{ "${group}.${content}" | t }}`;
+          }
+
           return group2;
         }
       );
@@ -119,6 +123,9 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
               return `{{ "${group}.${content}_2" | t }}`;
             }
           }
+          if (translations[group][content] === group2) {
+            return `{{ "${group}.${content}" | t }}`;
+          }
 
           return group2;
         }
@@ -172,6 +179,9 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
               translations[group][`${content}_2`] = group2;
               return `{{ "${group}.${content}_2" | t }}`;
             }
+          }
+          if (translations[group][content] === group2) {
+            return `{{ "${group}.${content}" | t }}`;
           }
 
           return group2;
