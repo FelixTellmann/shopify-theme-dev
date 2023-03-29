@@ -1,5 +1,4 @@
 export const toSnakeCase = (str: string) => {
-
   if (typeof str === "number") {
     str = `${str}`;
   }
