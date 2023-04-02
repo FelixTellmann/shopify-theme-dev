@@ -121,7 +121,7 @@ const getKeyType = (key: typeof ownerTypes[number]) => {
       return "_Shop_metafields";
   }
 };
-const imports = `import { _Metafield_liquid, _Metafield_liquid_file_reference, _Metafield_liquid_list_file_reference, _Metafield_liquid_list_product_reference, _Metafield_liquid_list_variant_reference, _Metafield_liquid_page_reference, _Metafield_liquid_product_reference, _Metafield_liquid_variant_reference,_Metafield_liquid_file_reference_generic,  _Metafield_liquid_file_reference_image, _Product_liquid } from "./shopify";\n`;
+const imports = `import { _Metafield_liquid, _Metafield_liquid_file_reference, _Metafield_liquid_list_file_reference, _Metafield_liquid_list_product_reference, _Metafield_liquid_list_variant_reference, _Metafield_liquid_page_reference, _Metafield_liquid_product_reference, _Metafield_liquid_variant_reference,_Metafield_liquid_file_reference_generic,  _Metafield_liquid_file_reference_image, _Product_liquid, _Collection_liquid } from "./shopify";\n`;
 
 export const metafieldDefinitionsQuery = /* GraphQL */ `
   query metafieldDefinitions($ownerType: MetafieldOwnerType!) {
