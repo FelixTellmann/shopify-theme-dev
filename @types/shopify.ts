@@ -746,6 +746,19 @@ export type _Variant_liquid = {
   inventory_management?: any;
   option2?: any;
   option3?: any;
+  store_availabilities?: {
+    available: boolean;
+    location: {
+      address: {};
+      id: number;
+      latitude: number;
+      longitude: number;
+      metafields: { [T: string]: _Metafield_liquid };
+      name: string;
+    };
+    pick_up_enabled: true;
+    pick_up_time: string;
+  }[];
 };
 
 export type _Product_liquid = {
@@ -803,7 +816,7 @@ export type _Media_liquid = {
   aspect_ratio: number;
   height: number;
   id: number;
-  media_type: string;
+  media_type: "image" | "model" | "video" | "external_video";
   position: number;
   preview_image: {
     aspect_ratio: number;
@@ -820,7 +833,7 @@ export type _Media_liquid = {
 };
 
 export type _Media_liquid_source = {
-  format: string;
+  format: "mp4" | "mov" | "m3u8";
   height: number;
   mime_type: string;
   url: string;
@@ -850,8 +863,8 @@ export type _Collection_liquid = {
   featured_image?: _Media_liquid;
   image?: _Media_liquid;
   product_pagination?: _Pagination_liquid;
-  products_best_selling?: number[];
-  products_manual?: number[];
+  products_best_selling?: string[];
+  products_manual?: string[];
 };
 
 export type _Collection_sort_options = [
@@ -1101,6 +1114,7 @@ export type _Routes_liquid = {
   product_recommendations_url: string;
   root_url: string;
   search_url: string;
+  host?: string;
 };
 
 export type _Recommendations_liquid = {
