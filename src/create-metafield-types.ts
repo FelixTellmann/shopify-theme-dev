@@ -2,6 +2,7 @@ import chalk from "chalk";
 import fs from "fs";
 import path from "path";
 import { writeCompareFile } from "./generate-sections";
+import { compile } from "json-schema-to-typescript";
 
 const ownerTypes = [
   "ARTICLE",
@@ -13,7 +14,9 @@ const ownerTypes = [
   "SHOP",
 ] as const;
 
-const getType = (type) => {
+const getType = async (type, validations: { name: string; type: string; value: string }[] = []) => {
+  const jsonSchema = validations.find((v) => v.type === "json");
+
   switch (type) {
     case "product_reference": {
       return `Omit<_Product_liquid, "metafields">`;
@@ -72,6 +75,21 @@ const getType = (type) => {
       return "(number | string)[]";
     }
     case "json": {
+      if (jsonSchema?.value) {
+        const types = await compile(JSON.parse(jsonSchema?.value), "__REPLACER", {
+          bannerComment: "",
+          additionalProperties: false,
+        });
+
+        const content = types.split(/__REPLACER\s*/)[1];
+
+        return content
+          .split("\n")
+          .map((item, index) => (index === 0 ? item : `  ${item}`))
+          .join("\n")
+          .replace(/}(\n|\s)*$/gi, "}");
+      }
+
       return "unknown";
     }
     case "volume":
