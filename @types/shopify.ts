@@ -833,7 +833,7 @@ export type _Media_liquid = {
 };
 
 export type _Media_liquid_source = {
-  format: "mp4" | "mov" | "m3u8";
+  format: "mp4" | "mov" | "m3u8" | "glb";
   height: number;
   mime_type: string;
   url: string;
