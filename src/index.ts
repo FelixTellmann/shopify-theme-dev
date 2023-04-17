@@ -156,6 +156,7 @@ export const init = async () => {
   const root = process.cwd();
   const sectionsFolder = path.join(root, "sections");
   const globalsFolder = path.join(root, "globals");
+  const assetsFolder = path.join(root, "assets");
 
   console.log(
     `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.magentaBright(
@@ -177,7 +178,11 @@ export const init = async () => {
     )}`
   );
 
-  if (fs.existsSync(sectionsFolder) && fs.existsSync(globalsFolder)) {
+  if (
+    fs.existsSync(sectionsFolder) &&
+    fs.existsSync(globalsFolder) &&
+    fs.existsSync(assetsFolder)
+  ) {
     watch([sectionsFolder, globalsFolder], { recursive: true }, async (evt, name) => {
       const startTime = Date.now();
 
@@ -246,6 +251,45 @@ export const init = async () => {
       }*/
     });
 
+    watch([assetsFolder], { recursive: true }, async (evt, name) => {
+      const startTime = Date.now();
+
+      const assetName = name.split(/[\\/]/gi).at(-1);
+
+      const assetPath = path.join(process.cwd(), SHOPIFY_THEME_FOLDER, "assets", assetName);
+
+      const rawContent = fs.readFileSync(name, {
+        encoding: "utf-8",
+      });
+
+      const ignoreASSETS = process.env.SHOPIFY_CMS_IGNORE_ASSETS?.split(",");
+
+      if (ignoreASSETS?.includes(assetPath.split(/[/\\]/)?.at(-1))) {
+        console.log(
+          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.greenBright(
+            `Ignored: ${assetPath.replace(process.cwd(), "")}`
+          )}`
+        );
+      } else {
+        writeCompareFile(assetPath, rawContent);
+      }
+
+      /*if (!fs.existsSync(assetPath)) {
+        fs.writeFileSync(assetPath, rawContent);
+        console.log(
+          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+            `Created: ${assetPath.replace(process.cwd(), "")}`
+          )}`
+        );
+        return;
+      }*/
+
+      /*const used = process.memoryUsage();
+      for (const key in used) {
+        console.log(`${key} ${Math.round((used[key] / 1024 / 1024) * 100) / 100} MB`);
+      }*/
+    });
+
     console.log("init Trigger");
 
     Object.keys(require.cache).forEach((path) => {
@@ -276,8 +320,20 @@ export const init = async () => {
         encoding: "utf-8",
       });
 
+      const ignoreASSETS = process.env.SHOPIFY_CMS_IGNORE_ASSETS?.split(",");
+
+      if (ignoreASSETS?.includes(assetPath.split(/[/\\]/)?.at(-1))) {
+        console.log(
+          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.greenBright(
+            `Ignored: ${assetPath.replace(process.cwd(), "")}`
+          )}`
+        );
+      } else {
+        writeCompareFile(assetPath, rawContent);
+      }
+
       // writeCompareFile(assetPath, rawContent);
-      if (!fs.existsSync(assetPath)) {
+      /*if (!fs.existsSync(assetPath)) {
         fs.writeFileSync(assetPath, rawContent);
         console.log(
           `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
@@ -285,7 +341,7 @@ export const init = async () => {
           )}`
         );
         return;
-      }
+      }*/
     }
     /*const used = process.memoryUsage();
     for (const key in used) {
@@ -337,7 +393,7 @@ export const getSourcePaths = () => {
   const snippets = [];
   const layouts = [];
   const sections = [];
-  const assets = [];
+  const assets = getAllFiles("assets");
 
   sourceFiles.forEach((filePath) => {
     if (isSnippet(filePath)) {
@@ -348,9 +404,6 @@ export const getSourcePaths = () => {
     }
     if (isSection(filePath)) {
       sections.push(filePath);
-    }
-    if (isAsset(filePath)) {
-      assets.push(filePath);
     }
   });
 
