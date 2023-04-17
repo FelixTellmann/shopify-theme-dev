@@ -270,6 +270,15 @@ export const init = async () => {
             `Ignored: ${assetPath.replace(process.cwd(), "")}`
           )}`
         );
+
+        if (!fs.existsSync(assetPath)) {
+          fs.writeFileSync(assetPath, rawContent);
+          console.log(
+            `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+              `Created: ${assetPath.replace(process.cwd(), "")}`
+            )}`
+          );
+        }
       } else {
         writeCompareFile(assetPath, rawContent);
       }
@@ -328,6 +337,14 @@ export const init = async () => {
             `Ignored: ${assetPath.replace(process.cwd(), "")}`
           )}`
         );
+        if (!fs.existsSync(assetPath)) {
+          fs.writeFileSync(assetPath, rawContent);
+          console.log(
+            `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+              `Created: ${assetPath.replace(process.cwd(), "")}`
+            )}`
+          );
+        }
       } else {
         writeCompareFile(assetPath, rawContent);
       }
