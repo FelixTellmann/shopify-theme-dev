@@ -806,10 +806,42 @@ export type _Product_liquid = {
   url: string;
   variants: _Variant_liquid[];
   selected_or_first_available_variant: _Variant_liquid;
+  selling_plan_groups?: _Product_selling_plan_groups_liquid[];
   vendor: string;
   compare_at_price?: number;
   featured_image?: string;
   featured_media?: _Media_liquid;
+};
+
+export type _Product_selling_plan_liquid = {
+  id: number;
+  name: string;
+  options: {
+    name: string;
+    position: number;
+    value: string;
+  }[];
+  recurring_deliveries: boolean;
+  price_adjustments: {
+    position: number;
+    value_type: string;
+    value: number;
+  }[];
+  checkout_charge: {
+    value_type: string;
+    value: number;
+  };
+};
+export type _Product_selling_plan_groups_liquid = {
+  id: string;
+  name: string;
+  options: {
+    name: string;
+    position: number;
+    values: string[];
+  }[];
+  selling_plans: _Product_selling_plan_liquid[];
+  app_id: string;
 };
 
 export type _Media_liquid = {
