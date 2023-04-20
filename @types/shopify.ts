@@ -806,6 +806,7 @@ export type _Product_liquid = {
   url: string;
   variants: _Variant_liquid[];
   selected_or_first_available_variant: _Variant_liquid;
+  requires_selling_plan?: boolean;
   selling_plan_groups?: _Product_selling_plan_groups_liquid[];
   vendor: string;
   compare_at_price?: number;
