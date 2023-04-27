@@ -533,7 +533,7 @@ export const generateAppFiles = (srcFolder, outFolder, appBlockSchemas, sectionL
     "extensions",
     outFolder,
     "locales",
-    "en.default.json"
+    "en.default.theme.json"
   );
   writeCompareFile(translationsPath, JSON.stringify(translations, undefined, 2));
 

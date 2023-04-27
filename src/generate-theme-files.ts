@@ -193,7 +193,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
     writeCompareFile(layoutPath, returnArr.join("\n"));
   }
 
-  const translationsPath = path.join(process.cwd(), folder, "locales", "en.default.json");
+  const translationsPath = path.join(process.cwd(), folder, "locales", "en.default.theme.json");
   writeCompareFile(translationsPath, JSON.stringify(translations, undefined, 2));
 
   const target = getAllFiles(folder);
