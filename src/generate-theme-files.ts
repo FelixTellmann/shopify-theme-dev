@@ -220,9 +220,11 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
   `;
 
   const translationTypes = `export type Translations = ${JSON.stringify(translations, undefined, 2)
-    .replace(/:[^\n{]*\n/gi, ": string;\n")
+    .replace(/(\s+)([^\n:]*):([^\n{]*?),?\n/gi, "$1/* $3 */\n$1$2: string;\n")
     .replace(/"/gi, "")
-    .replace(/,/gi, ";")};
+    .replace(/,/gi, ";")
+    .replace(/}\n/gi, "};\n")
+    .replace(/\n\n/gi, "\n")};
 declare global {
   interface Window {
     theme_content?: Translations;
