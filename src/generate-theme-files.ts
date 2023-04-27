@@ -194,7 +194,45 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
   }
 
   const translationsPath = path.join(process.cwd(), folder, "locales", "en.default.theme.json");
+  const translationJsPath = path.join(process.cwd(), folder, "snippets", "_translations.liquid");
+  const translationTypesPath = path.join(process.cwd(), "@types", "translations.ts");
+
+  function isObject(x: any): x is Object {
+    return x !== null && typeof x === "object" && !Array.isArray(x);
+  }
+  const transformTranslations = (input, prevKey = "") => {
+    if (isObject(input)) {
+      return Object.entries(input).reduce<any>(
+        (acc, [key, val]) => {
+          acc[key] = transformTranslations(val, `${prevKey ? `${prevKey}.` : ""}${key}`);
+          return acc;
+        },
+        {}
+      );
+    }
+    if (typeof input === "string") {
+      return `{{ '${prevKey}' | t }}`;
+    }
+  };
+  const translationsJs = `<script>
+  window.theme_content = ${JSON.stringify(transformTranslations(translations), undefined, 2)};
+</script>
+  `;
+
+  const translationTypes = `export type Translations = ${JSON.stringify(translations, undefined, 2)
+    .replace(/:[^\n{]*\n/gi, ": string;\n")
+    .replace(/"/gi, "")
+    .replace(/,/gi, ";")};
+declare global {
+  interface Window {
+    theme_content: Translations;
+  }
+}
+`;
+
   writeCompareFile(translationsPath, JSON.stringify(translations, undefined, 2));
+  writeCompareFile(translationJsPath, translationsJs);
+  writeCompareFile(translationTypesPath, translationTypes);
 
   const target = getAllFiles(folder);
 
