@@ -225,7 +225,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
     .replace(/,/gi, ";")};
 declare global {
   interface Window {
-    theme_content: Translations;
+    theme_content?: Translations;
   }
 }
 `;
