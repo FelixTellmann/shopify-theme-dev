@@ -193,7 +193,11 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
     writeCompareFile(layoutPath, returnArr.join("\n"));
   }
 
-  const translationsPath = path.join(process.cwd(), folder, "locales", "en.default.theme.json");
+  let localesFile = "en.default.json";
+  if (process.env.SHOPIFY_CMS_LOCALES) {
+    localesFile = process.env.SHOPIFY_CMS_LOCALES;
+  }
+  const translationsPath = path.join(process.cwd(), folder, "locales", localesFile);
   const translationJsPath = path.join(process.cwd(), folder, "snippets", "_translations.liquid");
   const translationTypesPath = path.join(process.cwd(), "@types", "translations.ts");
 
