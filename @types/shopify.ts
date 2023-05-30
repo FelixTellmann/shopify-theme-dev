@@ -561,6 +561,7 @@ export type _Product_liquid_json = {
   images: any[];
   options: string[];
   price: number;
+  media: _Media_liquid[];
   price_max: number;
   price_min: number;
   price_varies: boolean;
