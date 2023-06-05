@@ -158,11 +158,18 @@ export const init = async () => {
   const globalsFolder = path.join(root, "globals");
   const assetsFolder = path.join(root, "assets");
 
+  console.log({
+    sectionsFolder,
+    globalsFolder,
+    assetsFolder,
+  });
+
   console.log(
     `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.magentaBright(
       `Shopify CMS Started`
     )}`
   );
+
   initShopifyTypes();
 
   if (!SHOPIFY_THEME_FOLDER) return;
