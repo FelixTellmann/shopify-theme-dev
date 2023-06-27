@@ -39,14 +39,15 @@ export const appDev = async () => {
     )}`
   );
   initShopifyTypes();
+ console.log(root, assetsFolder, fs.existsSync(blocksFolder), fs.existsSync(assetsFolder), fs.existsSync(snippetsFolder))
 
   if (!SHOPIFY_APP_EXTENSION_OUT_FOLDER) return;
 
   initAppExtensionFolders(SHOPIFY_APP_EXTENSION_OUT_FOLDER);
   createMetafieldTypes();
 
-  if (fs.existsSync(assetsFolder) && fs.existsSync(blocksFolder) && fs.existsSync(snippetsFolder)) {
-    watch([assetsFolder, blocksFolder, snippetsFolder], { recursive: true }, async (evt, name) => {
+  if (  fs.existsSync(blocksFolder) && fs.existsSync(snippetsFolder)) {
+    watch([ blocksFolder, snippetsFolder], { recursive: true }, async (evt, name) => {
       const startTime = Date.now();
 
       /* De-cache Settings */
@@ -54,8 +55,7 @@ export const appDev = async () => {
         Object.keys(require.cache).forEach((path) => {
           if (
             path.includes(blocksFolder) ||
-            path.includes(snippetsFolder) ||
-            path.includes(assetsFolder)
+            path.includes(snippetsFolder)
           ) {
             decache(path);
             delete require.cache[path];
@@ -86,8 +86,7 @@ export const appDev = async () => {
         Object.keys(require.cache).forEach((path) => {
           if (
             path.includes(blocksFolder) ||
-            path.includes(snippetsFolder) ||
-            path.includes(assetsFolder)
+            path.includes(snippetsFolder)
           ) {
             decache(path);
             delete require.cache[path];
@@ -142,8 +141,7 @@ export const appDev = async () => {
     Object.keys(require.cache).forEach((path) => {
       if (
         path.includes(blocksFolder) ||
-        path.includes(snippetsFolder) ||
-        path.includes(assetsFolder)
+        path.includes(snippetsFolder)
       ) {
         decache(path);
         delete require.cache[path];
