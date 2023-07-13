@@ -230,6 +230,7 @@ export const init = async () => {
         const sectionLocaleCount = getLocaleCount(sections);
 
         generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
+        generateSchemaLocales(sections, settings, SHOPIFY_THEME_FOLDER, sectionLocaleCount);
       }
 
       if (isAsset(name)) {
