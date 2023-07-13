@@ -505,9 +505,9 @@ export const generateLiquidFiles = (folder: string) => {
 };
 
 export const isSettingUpdate = (name) =>
-  /sections[\\/][^\\/]*\\schema.ts$/gi.test(name) ||
-  /globals\\settings_schema\.ts$/gi.test(name) ||
-  /globals\\settings[\\/][^\\/]*\.ts$/gi.test(name);
+  /sections[\\/][^\\/]*[\\/]schema.ts$/gi.test(name) ||
+  /globals[\\/]settings_schema\.ts$/gi.test(name) ||
+  /globals[\\/]settings[\\/][^\\/]*\.ts$/gi.test(name);
 
 export const isSection = (name) => /sections[\\/][^\\/]*[\\/][^.]*\.liquid$/gi.test(name);
 
