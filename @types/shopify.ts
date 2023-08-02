@@ -35,12 +35,10 @@ export type ShopifyColorThemeRole = Extract<
   { id: string }
 >["id"];
 
-export type ShopifyColorThemeOptionalGradientRole =
-  | {
-      solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
-      gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
-    }
-  | ShopifyColorThemeRole;
+export type ShopifyColorThemeOptionalGradientRole = {
+  solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+  gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+};
 
 export type ShopifyColorThemeGroup = {
   type: "color_scheme_group";
