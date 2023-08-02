@@ -49,13 +49,25 @@ export type ShopifyColorThemeGroup = {
   id: string;
   definition: ShopifyColorThemeGroupDefinition[];
   role: {
-    [T: ShopifyColorThemeRole]: any;
-    background: ShopifyColorThemeOptionalGradientRole<"background">;
-    primary_button: ShopifyColorThemeOptionalGradientRole<"primary_button">;
-    secondary_button: ShopifyColorThemeOptionalGradientRole<"secondary_button">;
-    text: ShopifyColorThemeOptionalGradientRole<"never">;
-    primary_button_border: ShopifyColorThemeOptionalGradientRole<"never">;
-    secondary_button_border: ShopifyColorThemeOptionalGradientRole<"never">;
+    background: {
+      solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+      gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+    };
+    primary_button: {
+      solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+      gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+    };
+    secondary_button: {
+      solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+      gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+    };
+    text: ShopifyColorThemeRole;
+    primary_button_border: ShopifyColorThemeRole;
+    secondary_button_border: ShopifyColorThemeRole;
+    on_primary_button: ShopifyColorThemeRole;
+    on_secondary_button: ShopifyColorThemeRole;
+    links: ShopifyColorThemeRole;
+    icons: ShopifyColorThemeRole;
   };
 };
 
