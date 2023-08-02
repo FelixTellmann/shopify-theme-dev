@@ -11,6 +11,60 @@ export type ShopifyParagraph = {
   type: "paragraph";
   info?: string;
 };
+
+export type ShopifyColorThemeGroupDefinition =
+  | ShopifyColor
+  | ShopifyColor_background
+  | ShopifyHeader
+  | ShopifyParagraph;
+
+export type ShopifyColorThemeGroupRoles =
+  | "background"
+  | "text"
+  | "primary_button"
+  | "secondary_button"
+  | "primary_button_border"
+  | "secondary_button_border"
+  | "on_primary_button"
+  | "on_secondary_button"
+  | "links"
+  | "icons";
+
+export type ShopifyColorThemeRole = Extract<
+  ShopifyColorThemeGroup["definition"][number],
+  { id: string }
+>["id"];
+
+export type ShopifyColorThemeOptionalGradientRole =
+  | {
+      solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+      gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+    }
+  | ShopifyColorThemeRole;
+
+export type ShopifyColorThemeGroup = {
+  type: "color_scheme_group";
+  id: string;
+  definition: ShopifyColorThemeGroupDefinition[];
+  role: {
+    background: ShopifyColorThemeOptionalGradientRole;
+    primary_button: ShopifyColorThemeOptionalGradientRole;
+    secondary_button: ShopifyColorThemeOptionalGradientRole;
+    text: ShopifyColorThemeRole;
+    primary_button_border: ShopifyColorThemeRole;
+    secondary_button_border: ShopifyColorThemeRole;
+  } & {
+    [T: ShopifyColorThemeRole]: ShopifyColorThemeRole;
+  };
+};
+
+export type ShopifyColorTheme = {
+  type: "color_scheme";
+  id: string;
+  label: string;
+  default?: string;
+};
+
 export type ShopifyCheckbox = {
   id: string;
   label: string;
@@ -235,7 +289,8 @@ export type ShopifySettingsInput =
   | ShopifyInlineRichtext
   | ShopifyUrl
   | ShopifyVideo
-  | ShopifyVideo_url;
+  | ShopifyVideo_url
+  | ShopifyColorTheme;
 
 type ExtractSettings<T extends ShopifySection | ShopifySectionBlock> = Extract<
   /* @ts-ignore*/
@@ -463,7 +518,12 @@ export type ShopifySettings = (
     ))
   | {
       name: string;
-      settings: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
+      settings: (
+        | ShopifySettingsInput
+        | ShopifyHeader
+        | ShopifyParagraph
+        | ShopifyColorThemeGroup
+      )[];
     }
 )[];
 
