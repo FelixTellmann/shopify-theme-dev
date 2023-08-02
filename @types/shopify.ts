@@ -49,14 +49,9 @@ export type ShopifyColorThemeGroup = {
   id: string;
   definition: ShopifyColorThemeGroupDefinition[];
   role: {
-    [T: ShopifyColorThemeRole]: ShopifyColorThemeOptionalGradientRole<
-      Exclude<ShopifyColorThemeRole, ReservedNames>
-    >;
-    /* @ts-ignore */
+    [T: ShopifyColorThemeRole]: any;
     background: ShopifyColorThemeOptionalGradientRole<"background">;
-    /* @ts-ignore */
     primary_button: ShopifyColorThemeOptionalGradientRole<"primary_button">;
-    /* @ts-ignore */
     secondary_button: ShopifyColorThemeOptionalGradientRole<"secondary_button">;
     text: ShopifyColorThemeOptionalGradientRole<"never">;
     primary_button_border: ShopifyColorThemeOptionalGradientRole<"never">;
