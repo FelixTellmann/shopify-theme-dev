@@ -40,6 +40,18 @@ export type ShopifyColorThemeOptionalGradientRole = {
   gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
 };
 
+type ReservedNames = "background" | "primary_button" | "secondary_button";
+type FooName = Exclude<string, ReservedNames>;
+const f1: FooName = "This"; // Works
+const f2: FooName = "this"; // One might expect this to work but IT DOES NOT as FooName is just evaluates to string
+
+function withName<T extends string>(v: T & (T extends ReservedNames ? "Value is reserved!" : {})) {
+  return v;
+}
+
+withName("this"); // Type '"this"' is not assignable to type '"Value is reserved!"'.
+withName("This"); // ok
+
 export type ShopifyColorThemeGroup = {
   type: "color_scheme_group";
   id: string;
@@ -53,7 +65,7 @@ export type ShopifyColorThemeGroup = {
     secondary_button_border: ShopifyColorThemeRole;
   } & {
     [
-      T: Exclude<ShopifyColorThemeRole, "background" | "primary_button" | "secondary_button">
+      T: ShopifyColorThemeRole extends ReservedNames ? never : ShopifyColorThemeRole
     ]: ShopifyColorThemeRole;
   };
 };
