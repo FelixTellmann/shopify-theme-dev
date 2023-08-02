@@ -65,7 +65,7 @@ export type ShopifyColorThemeGroup = {
     secondary_button_border: ShopifyColorThemeRole;
   } & {
     [
-      T: ShopifyColorThemeRole extends ReservedNames ? never : ShopifyColorThemeRole
+      T: ShopifyColorThemeRole extends ReservedNames ? "not_allowed" : ShopifyColorThemeRole
     ]: ShopifyColorThemeRole;
   };
 };
