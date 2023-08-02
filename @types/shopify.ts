@@ -52,7 +52,9 @@ export type ShopifyColorThemeGroup = {
     primary_button_border: ShopifyColorThemeRole;
     secondary_button_border: ShopifyColorThemeRole;
   } & {
-    [T: ShopifyColorThemeRole]: ShopifyColorThemeRole;
+    [
+      T: Exclude<ShopifyColorThemeRole, "background" | "primary_button" | "secondary_button">
+    ]: ShopifyColorThemeRole;
   };
 };
 
@@ -61,6 +63,7 @@ export type ShopifyColorTheme = {
   id: string;
   label: string;
   default?: string;
+  info?: string;
 };
 
 export type ShopifyCheckbox = {
