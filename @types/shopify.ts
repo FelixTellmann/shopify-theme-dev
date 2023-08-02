@@ -35,40 +35,32 @@ export type ShopifyColorThemeRole = Extract<
   { id: string }
 >["id"];
 
-export type ShopifyColorThemeOptionalGradientRole = {
-  solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
-  gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
-};
+export type ShopifyColorThemeOptionalGradientRole<T extends string> = T extends ReservedNames
+  ? {
+      solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+      gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+    }
+  : ShopifyColorThemeRole;
 
 type ReservedNames = "background" | "primary_button" | "secondary_button";
-type FooName = Exclude<string, ReservedNames>;
-const f1: FooName = "This"; // Works
-const f2: FooName = "this"; // One might expect this to work but IT DOES NOT as FooName is just evaluates to string
-
-function withName<T extends string>(v: T & (T extends ReservedNames ? "Value is reserved!" : {})) {
-  return v;
-}
-
-withName("this"); // Type '"this"' is not assignable to type '"Value is reserved!"'.
-withName("This"); // ok
 
 export type ShopifyColorThemeGroup = {
   type: "color_scheme_group";
   id: string;
   definition: ShopifyColorThemeGroupDefinition[];
   role: {
-    background: ShopifyColorThemeOptionalGradientRole;
-    primary_button: ShopifyColorThemeOptionalGradientRole;
-    secondary_button: ShopifyColorThemeOptionalGradientRole;
-    text: ShopifyColorThemeRole;
-    primary_button_border: ShopifyColorThemeRole;
-    secondary_button_border: ShopifyColorThemeRole;
-  } & {
-    [
-      T: ShopifyColorThemeRole extends ReservedNames ? ReservedNames : ShopifyColorThemeRole
-    ]: ShopifyColorThemeRole extends ReservedNames
-      ? ShopifyColorThemeOptionalGradientRole
-      : ShopifyColorThemeRole;
+    [T: ShopifyColorThemeRole]: ShopifyColorThemeOptionalGradientRole<
+      Exclude<ShopifyColorThemeRole, ReservedNames>
+    >;
+    /* @ts-ignore */
+    background: ShopifyColorThemeOptionalGradientRole<"background">;
+    /* @ts-ignore */
+    primary_button: ShopifyColorThemeOptionalGradientRole<"primary_button">;
+    /* @ts-ignore */
+    secondary_button: ShopifyColorThemeOptionalGradientRole<"secondary_button">;
+    text: ShopifyColorThemeOptionalGradientRole<"never">;
+    primary_button_border: ShopifyColorThemeOptionalGradientRole<"never">;
+    secondary_button_border: ShopifyColorThemeOptionalGradientRole<"never">;
   };
 };
 
