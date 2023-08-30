@@ -443,6 +443,7 @@ export type ShopifyTemplateTypes =
   | "password"
   | "product"
   | "search";
+
 export type ShopifySection<T = never> = {
   name: string;
   blocks?: ShopifySectionBlock[];
@@ -460,6 +461,7 @@ export type ShopifySection<T = never> = {
   };
   disabled_block_files?: boolean;
   generate_block_files?: string[];
+  disabled?: boolean;
 } & (
   | {
       enabled_on?: {

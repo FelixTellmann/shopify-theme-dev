@@ -13,6 +13,8 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
 
   for (const key in sectionsSchemas) {
     const section = sectionsSchemas[key];
+    if (section.disabled) continue;
+
     const sectionName = `${toKebabCase(key)}.liquid`;
     const sectionPath = path.join(process.cwd(), folder, "sections", sectionName);
 
@@ -75,6 +77,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
       translationArray.push(process.env.SHOPIFY_SECTIONS_AFTER_RENDER);
     }
     translationArray.push(sectionToLiquid_WithLocalization(section, key, sectionLocaleCount));
+
     writeCompareFile(sectionPath, translationArray.join("\n"));
   }
 
