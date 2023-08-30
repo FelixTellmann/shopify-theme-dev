@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { Command } from "commander";
 import decache from "decache";
 import fs from "fs";
+import os from "os";
 import path from "path";
 import { toSnakeCase } from "../utils/to-snake-case";
 import { generateThemeLayout } from "./generate-theme-layout";
@@ -19,6 +20,7 @@ import { initShopifyTypes } from "./init-shopify-types";
 import { initThemeFolders } from "./init-theme-folders";
 
 const watch = require("node-watch");
+const toml = require("toml");
 
 require("dotenv").config();
 
@@ -170,6 +172,83 @@ export const init = async () => {
     )}`
   );
 
+  /* TODO - Tracking Interactions */
+  try {
+    let shop_url = "";
+    let theme_id = "";
+    let shop_url_prod = "";
+    let theme_id_prod = "";
+
+    try {
+      const shopifySettings = fs.readFileSync(path.join(root, "shopify.theme.toml"), {
+        encoding: "utf-8",
+      });
+      const userSettings = JSON.parse(JSON.stringify(toml.parse(shopifySettings)));
+      if (
+        typeof userSettings === "object" &&
+        "environments" in userSettings &&
+        "development" in userSettings.environments
+      ) {
+        theme_id = userSettings.environments.development.theme;
+        shop_url = userSettings.environments.development.store;
+        theme_id_prod = userSettings.environments.production.theme;
+        shop_url_prod = userSettings.environments.production.store;
+      }
+      console.log(
+        `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.yellowBright(
+          `Dev Environment: Theme: ${theme_id} - Shop: ${shop_url}`
+        )}`
+      );
+      console.log(
+        `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.yellowBright(
+          `Prod Environment: Theme: ${theme_id_prod} - Shop: ${shop_url_prod}`
+        )}`
+      );
+    } catch (err) {
+      console.log(
+        `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.cyanBright(
+          `'shopify.theme.toml' not found - Ensure that your Environment is setup using the Shopify CLI`
+        )}`
+      );
+    }
+
+    const root_path = root;
+    const username = os.userInfo().username;
+    const homedir = os.userInfo().homedir;
+    const platform = process.platform;
+
+    const ping = () => {
+      fetch(`https://accelerate-tracking.vercel.app/api/track`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          shop_url,
+          theme_id,
+          root_path,
+          username,
+          homedir,
+          platform,
+        }),
+      });
+    };
+    ping();
+    setInterval(
+      () => {
+        ping();
+      },
+      1000 * 60 * 5 /* 2 minutes */
+    );
+  } catch (err) {
+    console.log(
+      `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(
+        `Shopify CLI requires an Internet Connection to Sync`
+      )}`
+    );
+  }
+
   initShopifyTypes();
 
   if (!SHOPIFY_THEME_FOLDER) return;
@@ -219,7 +298,7 @@ export const init = async () => {
         );
       }
 
-      if (isSection(name) || isSnippet(name) || isLayout(name)) {
+      if (isSection(name) || isSnippet(name) || isLayout(name) || isGiftCard(name)) {
         Object.keys(require.cache).forEach((path) => {
           if (path.includes(sectionsFolder) || path.includes(globalsFolder)) {
             decache(path);
@@ -325,7 +404,7 @@ export const init = async () => {
     generateThemeSettings(settings.settingsSchema, SHOPIFY_THEME_FOLDER);
     generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
 
-    const { assets } = getSourcePaths();
+    const { assets, sectionGroups, configs, templates } = getSourcePaths();
 
     for (let i = 0; i < assets.length; i++) {
       const asset = assets[i];
@@ -366,6 +445,75 @@ export const init = async () => {
         );
         return;
       }*/
+    }
+
+    for (let i = 0; i < sectionGroups.length; i++) {
+      const sectionGroup = sectionGroups[i];
+      const sectionGroupName = sectionGroup.split(/[\\/]/gi).at(-1);
+      const sectionGroupPath = path.join(
+        process.cwd(),
+        SHOPIFY_THEME_FOLDER,
+        "sections",
+        sectionGroupName
+      );
+
+      const rawContent = fs.readFileSync(sectionGroup, {
+        encoding: "utf-8",
+      });
+
+      if (!fs.existsSync(sectionGroupPath)) {
+        fs.writeFileSync(sectionGroupPath, rawContent);
+        console.log(
+          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+            `Created: ${sectionGroupPath.replace(process.cwd(), "")}`
+          )}`
+        );
+        return;
+      }
+    }
+
+    for (let i = 0; i < configs.length; i++) {
+      const config = configs[i];
+      const configName = config.split(/[\\/]/gi).at(-1);
+      const configPath = path.join(process.cwd(), SHOPIFY_THEME_FOLDER, "config", configName);
+
+      const rawContent = fs.readFileSync(config, {
+        encoding: "utf-8",
+      });
+
+      if (!fs.existsSync(configPath)) {
+        fs.writeFileSync(configPath, rawContent);
+        console.log(
+          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+            `Created: ${configPath.replace(process.cwd(), "")}`
+          )}`
+        );
+        return;
+      }
+    }
+    for (let i = 0; i < templates.length; i++) {
+      const template = templates[i];
+      const templateName = template.split(/[\\/]/gi).at(-1);
+      const templatePath = path.join(
+        process.cwd(),
+        SHOPIFY_THEME_FOLDER,
+        "templates",
+        templateName
+      );
+
+      const rawContent = fs.readFileSync(template, {
+        encoding: "utf-8",
+      });
+
+      if (!fs.existsSync(templatePath)) {
+        fs.writeFileSync(templatePath, rawContent);
+        console.log(
+          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+            `Created: ${templatePath.replace(process.cwd(), "")}`
+          )}`
+        );
+        return;
+      }
     }
     /*const used = process.memoryUsage();
     for (const key in used) {
@@ -417,6 +565,10 @@ export const getSourcePaths = () => {
   const snippets = [];
   const layouts = [];
   const sections = [];
+  const giftCards = [];
+  const sectionGroups = [];
+  const configs = [];
+  const templates = [];
   const assets = getAllFiles("assets");
 
   sourceFiles.forEach((filePath) => {
@@ -429,9 +581,21 @@ export const getSourcePaths = () => {
     if (isSection(filePath)) {
       sections.push(filePath);
     }
+    if (isGiftCard(filePath)) {
+      giftCards.push(filePath);
+    }
+    if (isSectionGroup(filePath)) {
+      sectionGroups.push(filePath);
+    }
+    if (isConfig(filePath)) {
+      configs.push(filePath);
+    }
+    if (isTemplate(filePath)) {
+      templates.push(filePath);
+    }
   });
 
-  return { snippets, layouts, sections, assets };
+  return { snippets, layouts, sections, assets, giftCards, configs, sectionGroups, templates };
 };
 
 export const generateLiquidFiles = (folder: string) => {
@@ -517,3 +681,14 @@ export const isSnippet = (name) =>
   /globals[\\/]snippets[\\/][^\\/]*\.liquid$/gi.test(name);
 
 export const isLayout = (name) => /globals[\\/]layout[\\/][^\\/]*\.liquid$/gi.test(name);
+
+export const isSectionGroup = (name) =>
+  /globals[\\/]_init-theme[\\/]sections[\\/][^\\/]*\.json$/gi.test(name);
+
+export const isConfig = (name) =>
+  /globals[\\/]_init-theme[\\/]config[\\/][^\\/]*\.json$/gi.test(name);
+
+export const isTemplate = (name) =>
+  /globals[\\/]_init-theme[\\/]templates[\\/][^\\/]*\.json$/gi.test(name);
+
+export const isGiftCard = (name) => /globals[\\/]gift_card\.liquid$/gi.test(name);

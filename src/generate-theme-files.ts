@@ -8,7 +8,7 @@ import { writeCompareFile } from "./generate-sections";
 import { getAllFiles, getSectionSchemas, getSourcePaths } from "./index";
 
 export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) => {
-  const { snippets, layouts, sections } = getSourcePaths();
+  const { snippets, layouts, sections, giftCards } = getSourcePaths();
   const translations: any = {};
 
   for (const key in sectionsSchemas) {
@@ -139,6 +139,64 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
     writeCompareFile(snippetPath, returnArr.join("\n"));
   }
 
+  for (let i = 0; i < giftCards.length; i++) {
+    const giftCard = giftCards[i];
+    const giftCardName = giftCard.split(/[\\/]/gi).at(-1);
+
+    const giftCardPath = path.join(process.cwd(), folder, "templates", giftCardName);
+
+    const returnArr = [];
+
+    const rawContent = fs.readFileSync(giftCard, {
+      encoding: "utf-8",
+    });
+
+    if (rawContent) {
+      const translatedContent = rawContent.replace(
+        /<t(\s+[^>]*)*>((.|\r|\n)*?)<\/t>/gi,
+        (str, group1, group2) => {
+          const group = toSnakeCase(giftCard.split(/[\\/]/gi).at(-1).split(".").at(0)).trim();
+          const content = toSnakeCase(group2?.split(" ")?.slice(0, 2)?.join("_") ?? "").trim();
+          const backupContent = toSnakeCase(group2).trim();
+          const id = toSnakeCase(group1?.replace(/id="(.*)"/gi, "$1") ?? "").trim();
+
+          if (!(group in translations)) {
+            translations[group] = {};
+          }
+
+          if (id && !(id in translations[group])) {
+            translations[group][id] = group2;
+            return `{{ "${group}.${id}" | t }}`;
+          }
+
+          if (!(content in translations[group])) {
+            translations[group][content] = group2;
+            return `{{ "${group}.${content}" | t }}`;
+          }
+
+          if (translations[group][content] !== group2) {
+            if (!(backupContent in translations[group])) {
+              translations[group][backupContent] = group2;
+              return `{{ "${group}.${backupContent}" | t }}`;
+            }
+            if (translations[group][backupContent] !== group2) {
+              translations[group][`${content}_2`] = group2;
+              return `{{ "${group}.${content}_2" | t }}`;
+            }
+          }
+          if (translations[group][content] === group2) {
+            return `{{ "${group}.${content}" | t }}`;
+          }
+
+          return group2;
+        }
+      );
+      returnArr.push(translatedContent);
+    }
+
+    writeCompareFile(giftCardPath, returnArr.join("\n"));
+  }
+
   for (let i = 0; i < layouts.length; i++) {
     const layout = layouts[i];
     const layoutName = layout.split(/[\\/]/gi).at(-1);
@@ -209,13 +267,10 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
   }
   const transformTranslations = (input, prevKey = "") => {
     if (isObject(input)) {
-      return Object.entries(input).reduce<any>(
-        (acc, [key, val]) => {
-          acc[key] = transformTranslations(val, `${prevKey ? `${prevKey}.` : ""}${key}`);
-          return acc;
-        },
-        {}
-      );
+      return Object.entries(input).reduce<any>((acc, [key, val]) => {
+        acc[key] = transformTranslations(val, `${prevKey ? `${prevKey}.` : ""}${key}`);
+        return acc;
+      }, {});
     }
     if (typeof input === "string") {
       return `{{ '${prevKey}' | t }}`;
