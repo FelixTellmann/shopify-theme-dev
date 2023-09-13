@@ -404,7 +404,7 @@ export const init = async () => {
     generateThemeSettings(settings.settingsSchema, SHOPIFY_THEME_FOLDER);
     generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
 
-    const { assets, sectionGroups, configs, templates } = getSourcePaths();
+    const { assets, sectionGroups, configs, templates, customerTemplates } = getSourcePaths();
 
     for (let i = 0; i < assets.length; i++) {
       const asset = assets[i];
@@ -512,6 +512,30 @@ export const init = async () => {
         );
       }
     }
+    for (let i = 0; i < customerTemplates.length; i++) {
+      const template = customerTemplates[i];
+      const templateName = template.split(/[\\/]/gi).at(-1);
+      const templatePath = path.join(
+        process.cwd(),
+        SHOPIFY_THEME_FOLDER,
+        "templates",
+        "customers",
+        templateName
+      );
+
+      const rawContent = fs.readFileSync(template, {
+        encoding: "utf-8",
+      });
+
+      if (!fs.existsSync(templatePath)) {
+        fs.writeFileSync(templatePath, rawContent);
+        console.log(
+          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+            `Created: ${templatePath.replace(process.cwd(), "")}`
+          )}`
+        );
+      }
+    }
     /*const used = process.memoryUsage();
     for (const key in used) {
       console.log(`${key} ${Math.round((used[key] / 1024 / 1024) * 100) / 100} MB`);
@@ -566,6 +590,7 @@ export const getSourcePaths = () => {
   const sectionGroups = [];
   const configs = [];
   const templates = [];
+  const customerTemplates = [];
   const assets = getAllFiles("assets");
 
   sourceFiles.forEach((filePath) => {
@@ -590,9 +615,22 @@ export const getSourcePaths = () => {
     if (isTemplate(filePath)) {
       templates.push(filePath);
     }
+    if (isCustomerTemplate(filePath)) {
+      customerTemplates.push(filePath);
+    }
   });
 
-  return { snippets, layouts, sections, assets, giftCards, configs, sectionGroups, templates };
+  return {
+    snippets,
+    layouts,
+    sections,
+    assets,
+    giftCards,
+    configs,
+    sectionGroups,
+    templates,
+    customerTemplates,
+  };
 };
 
 export const generateLiquidFiles = (folder: string) => {
@@ -690,5 +728,8 @@ export const isConfig = (name) =>
 
 export const isTemplate = (name) =>
   /globals[\\/]_init-theme[\\/]templates[\\/][^\\/]*\.json$/gi.test(name);
+
+export const isCustomerTemplate = (name) =>
+  /globals[\\/]_init-theme[\\/]templates[\\/]customers[\\/][^\\/]*\.json$/gi.test(name);
 
 export const isGiftCard = (name) => /globals[\\/]gift_card\.liquid$/gi.test(name);

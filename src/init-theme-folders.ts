@@ -30,4 +30,7 @@ export const initThemeFolders = (folder: string) => {
   if (!fs.existsSync(path.join(process.cwd(), folder, "templates"))) {
     fs.mkdirSync(path.join(process.cwd(), folder, "templates"), { recursive: true });
   }
+  if (!fs.existsSync(path.join(process.cwd(), folder, "templates", "customers"))) {
+    fs.mkdirSync(path.join(process.cwd(), folder, "templates", "customers"), { recursive: true });
+  }
 };
