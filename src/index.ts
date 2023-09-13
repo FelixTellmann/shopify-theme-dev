@@ -468,7 +468,6 @@ export const init = async () => {
             `Created: ${sectionGroupPath.replace(process.cwd(), "")}`
           )}`
         );
-        return;
       }
     }
 
@@ -488,7 +487,6 @@ export const init = async () => {
             `Created: ${configPath.replace(process.cwd(), "")}`
           )}`
         );
-        return;
       }
     }
     for (let i = 0; i < templates.length; i++) {
@@ -512,7 +510,6 @@ export const init = async () => {
             `Created: ${templatePath.replace(process.cwd(), "")}`
           )}`
         );
-        return;
       }
     }
     /*const used = process.memoryUsage();
@@ -639,6 +636,9 @@ export const generateLiquidFiles = (folder: string) => {
         const targetFile = source.find((sourcePath) =>
           sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
         );
+        if (fileName.includes("_translations.liquid")) {
+          continue;
+        }
         if (!targetFile) {
           console.log(
             `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(

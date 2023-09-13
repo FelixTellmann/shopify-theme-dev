@@ -307,6 +307,9 @@ declare global {
         const targetFile = snippets.find((sourcePath) =>
           sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
         );
+        if (fileName.includes("_translations.liquid")) {
+          continue;
+        }
         if (!targetFile) {
           console.log(
             `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.redBright(
