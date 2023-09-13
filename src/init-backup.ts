@@ -46,13 +46,19 @@ export const initBackup = async (
     console.log(chalk.green(`Backup in progress: Assets downloaded`));
 
     if (!fs.existsSync(path.join(process.cwd(), ".shopify-typed-settings", folder))) {
-      fs.mkdirSync(path.join(process.cwd(), ".shopify-typed-settings", folder));
+      fs.mkdirSync(path.join(process.cwd(), ".shopify-typed-settings", folder), {
+        recursive: true,
+      });
     }
     if (!fs.existsSync(path.join(process.cwd(), ".shopify-typed-settings", folder, "templates"))) {
-      fs.mkdirSync(path.join(process.cwd(), ".shopify-typed-settings", folder, "templates"));
+      fs.mkdirSync(path.join(process.cwd(), ".shopify-typed-settings", folder, "templates"), {
+        recursive: true,
+      });
     }
     if (!fs.existsSync(path.join(process.cwd(), ".shopify-typed-settings", folder, "config"))) {
-      fs.mkdirSync(path.join(process.cwd(), ".shopify-typed-settings", folder, "config"));
+      fs.mkdirSync(path.join(process.cwd(), ".shopify-typed-settings", folder, "config"), {
+        recursive: true,
+      });
     }
     files.map((file) => {
       fs.writeFileSync(

@@ -7,7 +7,7 @@ import { PROJECT_ROOT } from "./project-root";
 export const initShopifyTypes = () => {
   /*= =============== Root Folder ================ */
   if (!fs.existsSync(path.join(process.cwd(), "@types"))) {
-    fs.mkdirSync(path.join(process.cwd(), "@types"));
+    fs.mkdirSync(path.join(process.cwd(), "@types"), { recursive: true });
   }
 
   const shopifyPath = path.join(process.cwd(), "@types", "shopify.ts");
