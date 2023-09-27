@@ -276,7 +276,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
       return `{{ '${prevKey}' | t }}`;
     }
   };
-  const translationsJs = `<script>
+  const translationsJs = `<script data-no-block>
   window.theme_content = ${JSON.stringify(transformTranslations(translations), undefined, 2)};
 </script>
   `;
