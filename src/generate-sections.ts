@@ -74,6 +74,8 @@ export const getSettingsType = (setting: ShopifySettingsInput) => {
       return "?: string";
     case "color_scheme":
       return "?: string";
+    case "text_alignment":
+      return `?: "left" | "center" | "right"`;
   }
 };
 

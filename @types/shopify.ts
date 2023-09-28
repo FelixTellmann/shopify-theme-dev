@@ -266,6 +266,13 @@ export type ShopifyVideo_url = {
   info?: string;
   placeholder?: string;
 };
+export type ShopifyTextAlignment = {
+  id: string;
+  label: string;
+  type: "text_alignment";
+  default?: "left" | "center" | "right";
+  info?: string;
+};
 
 export type ShopifyVideo = {
   id: string;
@@ -304,7 +311,8 @@ export type ShopifySettingsInput =
   | ShopifyUrl
   | ShopifyVideo
   | ShopifyVideo_url
-  | ShopifyColorTheme;
+  | ShopifyColorTheme
+  | ShopifyTextAlignment;
 
 type ExtractSettings<T extends ShopifySection | ShopifySectionBlock> = Extract<
   /* @ts-ignore*/
@@ -337,6 +345,8 @@ type MapSettings<Section extends ShopifySection | ShopifySectionBlock> = {
         | "url"
         | "font"
     ? string
+    : ExtractSetting<Section, ID>["type"] extends "text_alignment"
+    ? "left" | "center" | "right"
     : ExtractSetting<Section, ID>["type"] extends "blog"
     ? _Blog_liquid
     : ExtractSetting<Section, ID>["type"] extends "collection"
@@ -985,7 +995,7 @@ export type _Collection_sort_options = [
   ["price-ascending", string],
   ["price-descending", string],
   ["created-ascending", string],
-  ["created-descending", string]
+  ["created-descending", string],
 ];
 
 export type _Collection_filter = {
