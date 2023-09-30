@@ -470,7 +470,7 @@ export type ShopifySection<T = never> = {
     };
   };
   disabled_block_files?: boolean;
-  generate_block_files?: string[];
+  generate_block_files?: T extends { blocks: any } ? T["blocks"][number]["type"][] : string[];
   disabled?: boolean;
 } & (
   | {
@@ -886,13 +886,13 @@ export type _Product_liquid = {
   price_min: number;
   price_varies: boolean;
   published_at: string;
+  selected_or_first_available_variant: _Variant_liquid;
   tags: string[];
   template_suffix: string;
   title: string;
   type: string;
   url: string;
   variants: _Variant_liquid[];
-  selected_or_first_available_variant: _Variant_liquid;
   requires_selling_plan?: boolean;
   selling_plan_groups?: _Product_selling_plan_groups_liquid[];
   vendor: string;
@@ -1130,6 +1130,7 @@ export type _Image_liquid = {
   id: string;
   src: string;
   width: number;
+  focal_point?: string;
   media_type?: any;
   preview_image?: any;
   variants?: any;
