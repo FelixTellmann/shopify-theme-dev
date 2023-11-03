@@ -65,7 +65,7 @@ export const generateSettings = (settingsSchema: ShopifySettings) => {
       if (localTypes.includes("_Product_liquid")) return;
       localTypes.push("_Product_liquid");
     }
-    if (setting.type === "product_list") {
+    if (setting.type === "product_list" && !setting.id.includes("__handle_only")) {
       if (localTypes.includes("_Product_liquid")) return;
       localTypes.push("_Product_liquid");
     }
@@ -73,7 +73,7 @@ export const generateSettings = (settingsSchema: ShopifySettings) => {
 
   settings.forEach(analyseSetting);
   const arr = [];
-  if (settings.length) {
+  if (settings?.length) {
     arr.push(`export type SettingsSchema = {`);
 
     arr.push(

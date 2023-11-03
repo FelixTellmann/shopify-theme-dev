@@ -37,8 +37,18 @@ export type ShopifyColorThemeRole = Extract<
 
 export type ShopifyColorThemeOptionalGradientRole<T extends string> = T extends ReservedNames
   ? {
-      solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
-      gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
+      solid: Extract<
+        ShopifyColorThemeGroup["definition"][number],
+        {
+          id: string;
+        }
+      >["id"];
+      gradient?: Extract<
+        ShopifyColorThemeGroup["definition"][number],
+        {
+          id: string;
+        }
+      >["id"];
     }
   : ShopifyColorThemeRole;
 
@@ -266,6 +276,13 @@ export type ShopifyVideo_url = {
   info?: string;
   placeholder?: string;
 };
+export type ShopifyTextAlignment = {
+  id: string;
+  label: string;
+  type: "text_alignment";
+  default?: "left" | "center" | "right";
+  info?: string;
+};
 
 export type ShopifyVideo = {
   id: string;
@@ -304,7 +321,9 @@ export type ShopifySettingsInput =
   | ShopifyUrl
   | ShopifyVideo
   | ShopifyVideo_url
-  | ShopifyColorTheme;
+  | ShopifyColorTheme
+  | ShopifyColorThemeGroup
+  | ShopifyTextAlignment;
 
 type ExtractSettings<T extends ShopifySection | ShopifySectionBlock> = Extract<
   /* @ts-ignore*/
@@ -337,6 +356,8 @@ type MapSettings<Section extends ShopifySection | ShopifySectionBlock> = {
         | "url"
         | "font"
     ? string
+    : ExtractSetting<Section, ID>["type"] extends "text_alignment"
+    ? "left" | "center" | "right"
     : ExtractSetting<Section, ID>["type"] extends "blog"
     ? _Blog_liquid
     : ExtractSetting<Section, ID>["type"] extends "collection"
@@ -361,6 +382,8 @@ type MapSettings<Section extends ShopifySection | ShopifySectionBlock> = {
     ? `<${_BlockTag}${string}</${_BlockTag}>`
     : ExtractSetting<Section, ID>["type"] extends "video_url"
     ? `${string}youtube${string}` | `${string}vimeo${string}`
+    : ExtractSetting<Section, ID>["type"] extends "video"
+    ? _Video_liquid
     : never;
 };
 
@@ -460,7 +483,7 @@ export type ShopifySection<T = never> = {
     };
   };
   disabled_block_files?: boolean;
-  generate_block_files?: string[];
+  generate_block_files?: T extends { blocks: any } ? T["blocks"][number]["type"][] : string[];
   disabled?: boolean;
 } & (
   | {
@@ -876,13 +899,13 @@ export type _Product_liquid = {
   price_min: number;
   price_varies: boolean;
   published_at: string;
+  selected_or_first_available_variant: _Variant_liquid;
   tags: string[];
   template_suffix: string;
   title: string;
   type: string;
   url: string;
   variants: _Variant_liquid[];
-  selected_or_first_available_variant: _Variant_liquid;
   requires_selling_plan?: boolean;
   selling_plan_groups?: _Product_selling_plan_groups_liquid[];
   vendor: string;
@@ -985,7 +1008,7 @@ export type _Collection_sort_options = [
   ["price-ascending", string],
   ["price-descending", string],
   ["created-ascending", string],
-  ["created-descending", string]
+  ["created-descending", string],
 ];
 
 export type _Collection_filter = {
@@ -1120,9 +1143,28 @@ export type _Image_liquid = {
   id: string;
   src: string;
   width: number;
+  focal_point?: string;
   media_type?: any;
   preview_image?: any;
   variants?: any;
+};
+
+export type _Video_liquid = {
+  alt: string;
+  aspect_ratio: number;
+  duration: number;
+  height: number;
+  id: string;
+  media_type: "video";
+  position: number;
+  preview_image: _Image_liquid;
+  sources: {
+    format: "mp4" | "mov" | "m3u8";
+    height: number;
+    mime_type: string;
+    url: string;
+    width: number;
+  }[];
 };
 
 export type _Shop_liquid_json = {

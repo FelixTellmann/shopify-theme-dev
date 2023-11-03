@@ -60,20 +60,37 @@ export const getSettingsType = (setting: ShopifySettingsInput) => {
       return "?: _Page_liquid | string";
     case "product":
       return "?: _Product_liquid | string";
-    case "product_list":
+    case "product_list": {
+      if (setting.id.includes("__handle_only")) {
+        return "?: string[]";
+      }
       return "?: _Product_liquid[]";
+    }
+    case "color_scheme_group":
+      return `?: {\n    [T:string]: {${setting.definition
+        .map((option) => {
+          if ("id" in option) {
+            return `\n      ${option.id}: string;`;
+          }
+          return "";
+        })
+        .join("")}\n    }\n  }`;
     case "richtext":
       return "?: `<${_BlockTag}${string}</${_BlockTag}>`";
     case "inline_richtext":
       return "?: string";
     case "url":
       return "?: string";
+    case "video":
+      return "?:  _Video_liquid";
     case "video_url":
       return "?:  `${string}youtube${string}` | `${string}vimeo${string}`";
     case "font":
       return "?: string";
     case "color_scheme":
       return "?: string";
+    case "text_alignment":
+      return `?: "left" | "center" | "right"`;
   }
 };
 
@@ -129,9 +146,13 @@ export const getImports = (sections: { [T: string]: ShopifySection }) => {
       if (localTypes.includes("_Product_liquid")) return;
       localTypes.push("_Product_liquid");
     }
-    if (setting.type === "product_list") {
+    if (setting.type === "product_list" && !setting.id.includes("__handle_only")) {
       if (localTypes.includes("_Product_liquid")) return;
       localTypes.push("_Product_liquid");
+    }
+    if (setting.type === "video") {
+      if (localTypes.includes("_Video_liquid")) return;
+      localTypes.push("_Video_liquid");
     }
   };
 
@@ -162,6 +183,7 @@ export const sectionToTypes = (section, key) => {
     arr.push(`  blocks: ${capitalize(key)}Blocks[];`);
   }
   arr.push(`  global: boolean;`);
+  arr.push(`  wrap_section_globals: boolean;`);
   arr.push(`  id: string;`);
   if (settings?.length) {
     arr.push(`  settings: {`);
@@ -244,7 +266,7 @@ export const sectionToTypes = (section, key) => {
     });
   }
 
-  if (section.blocks?.length && section.blocks.length === 1) {
+  if (section.blocks?.length && section.blocks?.length === 1) {
     arr.push("");
     arr.push(
       `export type ${capitalize(key)}Blocks = ${capitalize(key)}Blocks${toPascalCase(
@@ -253,12 +275,12 @@ export const sectionToTypes = (section, key) => {
     );
   }
 
-  if (section.blocks?.length && section.blocks.length > 1) {
+  if (section.blocks?.length && section.blocks?.length > 1) {
     arr.push("");
     arr.push(`export type ${capitalize(key)}Blocks =`);
 
     section.blocks?.forEach((block, i) => {
-      if (section.blocks.length - 1 === i) {
+      if (section.blocks?.length - 1 === i) {
         arr.push(`  | ${capitalize(key)}Blocks${toPascalCase(block.type.replace("@", ""))};`);
       } else {
         arr.push(`  | ${capitalize(key)}Blocks${toPascalCase(block.type.replace("@", ""))}`);
@@ -406,7 +428,9 @@ export const RESERVED_VARIABLES = [
   "group",
 ];
 
-export const updateSectionsSettings = (sections: { [T: string]: ShopifySection }) => {
+export const updateSectionsSettings = (sections: {
+  [T: string]: ShopifySection<{ blocks: any; settings: any }>;
+}) => {
   for (const key in sections) {
     const section = sections[key];
 
