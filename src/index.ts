@@ -278,7 +278,7 @@ export const init = async () => {
     fs.existsSync(assetsFolder)
   ) {
     watch(
-      [sectionsFolder, snippetsFolder, configFolder, templatesFolder, layoutFolder],
+      [sectionsFolder, snippetsFolder, configFolder, templatesFolder, layoutFolder, utilsFolder],
       { recursive: true },
       async (evt, name) => {
         const startTime = Date.now();
