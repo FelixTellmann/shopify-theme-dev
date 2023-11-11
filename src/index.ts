@@ -164,6 +164,7 @@ export const init = async () => {
   const root = process.cwd();
   const sectionsFolder = path.join(root, "sections");
   const utilsFolder = path.join(root, "@utils");
+  const layoutFolder = path.join(root, "layout");
   const snippetsFolder = path.join(root, "snippets");
   const templatesFolder = path.join(root, "templates");
   const assetsFolder = path.join(root, "assets");
@@ -273,10 +274,11 @@ export const init = async () => {
     fs.existsSync(templatesFolder) &&
     fs.existsSync(configFolder) &&
     fs.existsSync(utilsFolder) &&
+    fs.existsSync(layoutFolder) &&
     fs.existsSync(assetsFolder)
   ) {
     watch(
-      [sectionsFolder, snippetsFolder, configFolder, templatesFolder],
+      [sectionsFolder, snippetsFolder, configFolder, templatesFolder, layoutFolder],
       { recursive: true },
       async (evt, name) => {
         const startTime = Date.now();
@@ -288,6 +290,7 @@ export const init = async () => {
               path.includes(snippetsFolder) ||
               path.includes(templatesFolder) ||
               path.includes(utilsFolder) ||
+              path.includes(layoutFolder) ||
               path.includes(configFolder)
             ) {
               decache(path);
@@ -320,6 +323,7 @@ export const init = async () => {
               path.includes(snippetsFolder) ||
               path.includes(templatesFolder) ||
               path.includes(utilsFolder) ||
+              path.includes(layoutFolder) ||
               path.includes(configFolder)
             ) {
               decache(path);
@@ -415,6 +419,7 @@ export const init = async () => {
         path.includes(snippetsFolder) ||
         path.includes(templatesFolder) ||
         path.includes(utilsFolder) ||
+        path.includes(layoutFolder) ||
         path.includes(configFolder)
       ) {
         decache(path);
