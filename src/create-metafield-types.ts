@@ -103,7 +103,7 @@ const getType = async (type, validations: { name: string; type: string; value: s
   }
 };
 
-const getKeyType = (key: typeof ownerTypes[number]) => {
+const getKeyType = (key: (typeof ownerTypes)[number]) => {
   switch (key) {
     case "ARTICLE":
       return "_Article_metafields";
@@ -139,8 +139,10 @@ export const metafieldDefinitionsQuery = /* GraphQL */ `
 `;
 
 export async function createMetafieldTypes() {
-  const returnData: { data: { key: string; type: string }[]; owner: typeof ownerTypes[number] }[] =
-    [];
+  const returnData: {
+    data: { key: string; type: string }[];
+    owner: (typeof ownerTypes)[number];
+  }[] = [];
 
   for (let i = 0; i < ownerTypes.length; i++) {
     const owner = ownerTypes[i];

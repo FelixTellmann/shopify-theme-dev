@@ -163,14 +163,11 @@ export function getLocaleCount(sections: { [p: string]: ShopifySection }) {
 export const init = async () => {
   const root = process.cwd();
   const sectionsFolder = path.join(root, "sections");
-  const globalsFolder = path.join(root, "globals");
+  const utilsFolder = path.join(root, "@utils");
+  const snippetsFolder = path.join(root, "snippets");
+  const templatesFolder = path.join(root, "templates");
   const assetsFolder = path.join(root, "assets");
-
-  console.log({
-    sectionsFolder,
-    globalsFolder,
-    assetsFolder,
-  });
+  const configFolder = path.join(root, "config");
 
   console.log(
     `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.magentaBright(
@@ -272,76 +269,95 @@ export const init = async () => {
 
   if (
     fs.existsSync(sectionsFolder) &&
-    fs.existsSync(globalsFolder) &&
+    fs.existsSync(snippetsFolder) &&
+    fs.existsSync(templatesFolder) &&
+    fs.existsSync(configFolder) &&
+    fs.existsSync(utilsFolder) &&
     fs.existsSync(assetsFolder)
   ) {
-    watch([sectionsFolder, globalsFolder], { recursive: true }, async (evt, name) => {
-      const startTime = Date.now();
+    watch(
+      [sectionsFolder, snippetsFolder, configFolder, templatesFolder],
+      { recursive: true },
+      async (evt, name) => {
+        const startTime = Date.now();
 
-      if (isSettingUpdate(name)) {
-        Object.keys(require.cache).forEach((path) => {
-          if (path.includes(sectionsFolder) || path.includes(globalsFolder)) {
-            decache(path);
-            delete require.cache[path];
-          }
-        });
+        if (isSettingUpdate(name)) {
+          Object.keys(require.cache).forEach((path) => {
+            if (
+              path.includes(sectionsFolder) ||
+              path.includes(snippetsFolder) ||
+              path.includes(templatesFolder) ||
+              path.includes(utilsFolder) ||
+              path.includes(configFolder)
+            ) {
+              decache(path);
+              delete require.cache[path];
+            }
+          });
 
-        const sections = getSectionSchemas();
-        const settings = getSettingsSchemas();
+          const sections = getSectionSchemas();
+          const settings = getSettingsSchemas();
 
-        const sectionLocaleCount = getLocaleCount(sections);
+          const sectionLocaleCount = getLocaleCount(sections);
 
-        generateSectionsTypes(sections);
-        updateSectionsSettings(sections);
-        generateSchemaLocales(sections, settings, SHOPIFY_THEME_FOLDER, sectionLocaleCount);
-        generateSettings(settings.settingsSchema);
-        generateThemeSettings(settings.settingsSchema, SHOPIFY_THEME_FOLDER);
-        generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
-        console.log(
-          `[${chalk.gray(new Date().toLocaleTimeString())}]: [${chalk.magentaBright(
-            `${Date.now() - startTime}ms`
-          )}] ${chalk.cyan(`File modified: ${name.replace(process.cwd(), "")}`)}`
-        );
-      }
-
-      if (isSection(name) || isSnippet(name) || isLayout(name) || isGiftCard(name)) {
-        Object.keys(require.cache).forEach((path) => {
-          if (path.includes(sectionsFolder) || path.includes(globalsFolder)) {
-            decache(path);
-            delete require.cache[path];
-          }
-        });
-        const sections = getSectionSchemas();
-        const sectionLocaleCount = getLocaleCount(sections);
-
-        generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
-      }
-
-      if (isAsset(name)) {
-        const assetName = name.split(/[\\/]/gi).at(-1);
-        const assetPath = path.join(process.cwd(), SHOPIFY_THEME_FOLDER, "assets", assetName);
-
-        const rawContent = fs.readFileSync(name, {
-          encoding: "utf-8",
-        });
-
-        // writeCompareFile(assetPath, rawContent);
-
-        if (!fs.existsSync(assetPath)) {
-          fs.writeFileSync(assetPath, rawContent);
+          generateSectionsTypes(sections);
+          updateSectionsSettings(sections);
+          generateSchemaLocales(sections, settings, SHOPIFY_THEME_FOLDER, sectionLocaleCount);
+          generateSettings(settings.settingsSchema);
+          generateThemeSettings(settings.settingsSchema, SHOPIFY_THEME_FOLDER);
+          generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
           console.log(
-            `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
-              `Created: ${assetPath.replace(process.cwd(), "")}`
-            )}`
+            `[${chalk.gray(new Date().toLocaleTimeString())}]: [${chalk.magentaBright(
+              `${Date.now() - startTime}ms`
+            )}] ${chalk.cyan(`File modified: ${name.replace(process.cwd(), "")}`)}`
           );
-          return;
         }
-      }
-      /*const used = process.memoryUsage();
+
+        if (isSection(name) || isSnippet(name) || isLayout(name) || isGiftCard(name)) {
+          Object.keys(require.cache).forEach((path) => {
+            if (
+              path.includes(sectionsFolder) ||
+              path.includes(snippetsFolder) ||
+              path.includes(templatesFolder) ||
+              path.includes(utilsFolder) ||
+              path.includes(configFolder)
+            ) {
+              decache(path);
+              delete require.cache[path];
+            }
+          });
+          const sections = getSectionSchemas();
+          const sectionLocaleCount = getLocaleCount(sections);
+
+          generateThemeFiles(SHOPIFY_THEME_FOLDER, sections, sectionLocaleCount);
+        }
+
+        if (isAsset(name)) {
+          const assetName = name.split(/[\\/]/gi).at(-1);
+          const assetPath = path.join(process.cwd(), SHOPIFY_THEME_FOLDER, "assets", assetName);
+
+          const rawContent = fs.readFileSync(name, {
+            encoding: "utf-8",
+          });
+
+          // writeCompareFile(assetPath, rawContent);
+
+          if (!fs.existsSync(assetPath)) {
+            fs.writeFileSync(assetPath, rawContent);
+            console.log(
+              `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+                `Created: ${assetPath.replace(process.cwd(), "")}`
+              )}`
+            );
+            return;
+          }
+        }
+        /*const used = process.memoryUsage();
       for (const key in used) {
         console.log(`${key} ${Math.round((used[key] / 1024 / 1024) * 100) / 100} MB`);
       }*/
-    });
+      }
+    );
 
     watch([assetsFolder], { recursive: true }, async (evt, name) => {
       const startTime = Date.now();
@@ -394,7 +410,13 @@ export const init = async () => {
     console.log("init Trigger");
 
     Object.keys(require.cache).forEach((path) => {
-      if (path.includes(sectionsFolder) || path.includes(globalsFolder)) {
+      if (
+        path.includes(sectionsFolder) ||
+        path.includes(snippetsFolder) ||
+        path.includes(templatesFolder) ||
+        path.includes(utilsFolder) ||
+        path.includes(configFolder)
+      ) {
         decache(path);
         delete require.cache[path];
       }
@@ -452,7 +474,6 @@ export const init = async () => {
         return;
       }*/
     }
-
     for (let i = 0; i < sectionGroups.length; i++) {
       const sectionGroup = sectionGroups[i];
       const sectionGroupName = sectionGroup.split(/[\\/]/gi).at(-1);
@@ -476,7 +497,6 @@ export const init = async () => {
         );
       }
     }
-
     for (let i = 0; i < configs.length; i++) {
       const config = configs[i];
       const configName = config.split(/[\\/]/gi).at(-1);
@@ -583,12 +603,19 @@ export const getAllFiles = (basePath = "sections") => {
 };
 
 export const getSettingsSchemas = () => {
-  const filename = path.join(process.cwd(), "globals", "settings_schema.ts");
+  const filename = path.join(process.cwd(), "config", "settings_schema.ts");
   return require(filename) as { settingsSchema: ShopifySettings };
 };
 
 export const getSourcePaths = () => {
-  const sourceFiles = [...getAllFiles("sections"), ...getAllFiles("globals")];
+  const sourceFiles = [
+    ...getAllFiles("assets"),
+    ...getAllFiles("config"),
+    ...getAllFiles("layout"),
+    ...getAllFiles("sections"),
+    ...getAllFiles("snippets"),
+    ...getAllFiles("templates"),
+  ];
   const snippets = [];
   const layouts = [];
   const sections = [];
@@ -597,7 +624,7 @@ export const getSourcePaths = () => {
   const configs = [];
   const templates = [];
   const customerTemplates = [];
-  const assets = getAllFiles("assets");
+  const assets = [];
 
   sourceFiles.forEach((filePath) => {
     if (isSnippet(filePath)) {
@@ -623,6 +650,9 @@ export const getSourcePaths = () => {
     }
     if (isCustomerTemplate(filePath)) {
       customerTemplates.push(filePath);
+    }
+    if (isAsset(filePath)) {
+      assets.push(filePath);
     }
   });
 
@@ -713,29 +743,30 @@ export const generateLiquidFiles = (folder: string) => {
 
 export const isSettingUpdate = (name) =>
   /sections[\\/][^\\/]*[\\/]schema.ts$/gi.test(name) ||
-  /globals[\\/]settings_schema\.ts$/gi.test(name) ||
-  /globals[\\/]settings[\\/][^\\/]*\.ts$/gi.test(name);
+  /config[\\/]settings_schema\.ts$/gi.test(name) ||
+  /@utils[\\/]settings[\\/][^\\/]*\.ts$/gi.test(name);
 
 export const isSection = (name) => /sections[\\/][^\\/]*[\\/][^.]*\.liquid$/gi.test(name);
 
-export const isAsset = (name) => /globals[\\/]assets[\\/][^\\/]*$/gi.test(name);
+export const isAsset = (name) =>
+  /assets[\\/][^\\/]*$/gi.test(name) ||
+  /snippets[\\/][^\\/]*.js$/gi.test(name) ||
+  /sections[\\/][^\\/]*.js$/gi.test(name) ||
+  /sections[\\/][^\\/]*.js$/gi.test(name);
 
 export const isSnippet = (name) =>
   /sections[\\/][^\\/]*[\\/][^.]*\.[^.]*\.liquid$/gi.test(name) ||
-  /globals[\\/]snippets[\\/][^\\/]*\.liquid$/gi.test(name);
+  /snippets[\\/][^\\/]*\.liquid$/gi.test(name);
 
-export const isLayout = (name) => /globals[\\/]layout[\\/][^\\/]*\.liquid$/gi.test(name);
+export const isLayout = (name) => /layout[\\/][^\\/]*\.liquid$/gi.test(name);
 
-export const isSectionGroup = (name) =>
-  /globals[\\/]_init-theme[\\/]sections[\\/][^\\/]*\.json$/gi.test(name);
+export const isSectionGroup = (name) => /sections[\\/]sections[\\/][^\\/]*\.json$/gi.test(name);
 
-export const isConfig = (name) =>
-  /globals[\\/]_init-theme[\\/]config[\\/][^\\/]*\.json$/gi.test(name);
+export const isConfig = (name) => /config[\\/][^\\/]*\.json$/gi.test(name);
 
-export const isTemplate = (name) =>
-  /globals[\\/]_init-theme[\\/]templates[\\/][^\\/]*\.json$/gi.test(name);
+export const isTemplate = (name) => /templates[\\/][^\\/]*\.json$/gi.test(name);
 
 export const isCustomerTemplate = (name) =>
-  /globals[\\/]_init-theme[\\/]templates[\\/]customers[\\/][^\\/]*\.json$/gi.test(name);
+  /templates[\\/]customers[\\/][^\\/]*\.json$/gi.test(name);
 
-export const isGiftCard = (name) => /globals[\\/]gift_card\.liquid$/gi.test(name);
+export const isGiftCard = (name) => /templates[\\/]gift_card\.liquid$/gi.test(name);
