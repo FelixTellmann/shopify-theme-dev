@@ -3,4 +3,8 @@
 console.log(process.cwd(), "shopify-theme-dev: process.cwd()");
 import { init } from "./src/index";
 
-init();
+try {
+  init();
+} catch (err) {
+  console.log(err);
+}
