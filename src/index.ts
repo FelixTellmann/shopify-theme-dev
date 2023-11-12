@@ -364,51 +364,55 @@ export const init = async () => {
     );
 
     watch([assetsFolder], { recursive: true }, async (evt, name) => {
-      const startTime = Date.now();
+      try {
+        const startTime = Date.now();
 
-      const assetName = name.split(/[\\/]/gi).at(-1);
+        const assetName = name.split(/[\\/]/gi).at(-1);
 
-      const assetPath = path.join(process.cwd(), SHOPIFY_THEME_FOLDER, "assets", assetName);
+        const assetPath = path.join(process.cwd(), SHOPIFY_THEME_FOLDER, "assets", assetName);
 
-      const rawContent = fs.readFileSync(name, {
-        encoding: "utf-8",
-      });
+        const rawContent = fs.readFileSync(name, {
+          encoding: "utf-8",
+        });
 
-      const ignoreASSETS = process.env.SHOPIFY_CMS_IGNORE_ASSETS?.split(",");
+        const ignoreASSETS = process.env.SHOPIFY_CMS_IGNORE_ASSETS?.split(",");
 
-      if (ignoreASSETS?.includes(assetPath.split(/[/\\]/)?.at(-1))) {
-        console.log(
-          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.greenBright(
-            `Ignored: ${assetPath.replace(process.cwd(), "")}`
-          )}`
-        );
-
-        if (!fs.existsSync(assetPath)) {
-          fs.writeFileSync(assetPath, rawContent);
+        if (ignoreASSETS?.includes(assetPath.split(/[/\\]/)?.at(-1))) {
           console.log(
-            `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
-              `Created: ${assetPath.replace(process.cwd(), "")}`
+            `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.greenBright(
+              `Ignored: ${assetPath.replace(process.cwd(), "")}`
             )}`
           );
+
+          if (!fs.existsSync(assetPath)) {
+            fs.writeFileSync(assetPath, rawContent);
+            console.log(
+              `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+                `Created: ${assetPath.replace(process.cwd(), "")}`
+              )}`
+            );
+          }
+        } else {
+          writeCompareFile(assetPath, rawContent);
         }
-      } else {
-        writeCompareFile(assetPath, rawContent);
+
+        /*if (!fs.existsSync(assetPath)) {
+         fs.writeFileSync(assetPath, rawContent);
+         console.log(
+           `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
+             `Created: ${assetPath.replace(process.cwd(), "")}`
+           )}`
+         );
+         return;
+       }*/
+
+        /*const used = process.memoryUsage();
+       for (const key in used) {
+         console.log(`${key} ${Math.round((used[key] / 1024 / 1024) * 100) / 100} MB`);
+       }*/
+      } catch (err) {
+        console.log(err);
       }
-
-      /*if (!fs.existsSync(assetPath)) {
-        fs.writeFileSync(assetPath, rawContent);
-        console.log(
-          `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.blueBright(
-            `Created: ${assetPath.replace(process.cwd(), "")}`
-          )}`
-        );
-        return;
-      }*/
-
-      /*const used = process.memoryUsage();
-      for (const key in used) {
-        console.log(`${key} ${Math.round((used[key] / 1024 / 1024) * 100) / 100} MB`);
-      }*/
     });
 
     console.log("init Trigger");
