@@ -1,6 +1,6 @@
 {
   "name": "shopify-theme-dev",
-  "version": "4.0.0-beta.5",
+  "version": "4.0.0-beta.6",
   "description": "Shopify Theme development with full Typescript Support",
   "author": "Felix Tellmann",
   "license": "MIT",
@@ -13,7 +13,7 @@
     "dev": "tsc --watch",
     "build": "tsc",
     "prepublish": "npm run build",
-    "publish": "npm publish --tag beta"
+    "init-publish": "npm publish --tag beta"
   },
   "repository": {
     "type": "git",

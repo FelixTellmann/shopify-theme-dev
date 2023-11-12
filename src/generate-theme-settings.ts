@@ -22,7 +22,8 @@ export const generateThemeSettings = (settingsSchema: ShopifySettings, folder) =
             ...setting,
             content:
               "content" in setting
-                ? noLocales && !setting.content.includes(" ")
+                ? (noLocales || (setting.content.length < 4 && /^[^\w]/gi.test(setting.content))) &&
+                  !setting.content.includes(" ")
                   ? setting.content
                   : `${settingsBase}.paragraph__${paragraphCount++}.content`
                 : undefined,
@@ -33,7 +34,8 @@ export const generateThemeSettings = (settingsSchema: ShopifySettings, folder) =
             ...setting,
             content:
               "content" in setting
-                ? noLocales && !setting.content.includes(" ")
+                ? (noLocales || (setting.content.length < 4 && /^[^\w]/gi.test(setting.content))) &&
+                  !setting.content.includes(" ")
                   ? setting.content
                   : `${settingsBase}.header__${headerCount++}.content`
                 : undefined,
@@ -43,19 +45,21 @@ export const generateThemeSettings = (settingsSchema: ShopifySettings, folder) =
           ...setting,
           label:
             "label" in setting
-              ? noLocales
+              ? noLocales || (setting.label.length < 4 && /^[^\w]/gi.test(setting.label))
                 ? setting.label
                 : `${settingsBase}.${setting.id}.label`
               : undefined,
           info:
             "info" in setting
-              ? noLocales
+              ? (noLocales || (setting.info.length < 4 && /^[^\w]/gi.test(setting.info))) &&
+                setting.info.length < 500
                 ? setting.info
                 : `${settingsBase}.${setting.id}.info`
               : undefined,
           placeholder:
             "placeholder" in setting
-              ? noLocales
+              ? noLocales ||
+                (setting.placeholder.length < 4 && /^[^\w]/gi.test(setting.placeholder))
                 ? setting.placeholder
                 : `${settingsBase}.${setting.id}.placeholder`
               : undefined,
@@ -65,7 +69,10 @@ export const generateThemeSettings = (settingsSchema: ShopifySettings, folder) =
                 ? setting.options
                 : setting.options.map((option, index) => ({
                     ...option,
-                    label: `${settingsBase}.${setting.id}.options__${index + 1}.label`,
+                    label:
+                      option.label.length < 4 && /^[^\w]/gi.test(option.label)
+                        ? option.label
+                        : `${settingsBase}.${setting.id}.options__${index + 1}.label`,
                   }))
               : undefined,
         };

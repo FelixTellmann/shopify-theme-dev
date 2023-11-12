@@ -47,7 +47,7 @@ export const sectionToLiquid_WithLocalization = (
         ...setting,
         label:
           "label" in setting
-            ? noLocales
+            ? noLocales || (setting.label.length < 4 && /^[^\w]/gi.test(setting.label))
               ? setting.label
               : sectionLocaleCount[toSnakeCase(setting.label)]?.length > 1
               ? `t:sections.all.${toSnakeCase(setting.label)}`
@@ -55,7 +55,8 @@ export const sectionToLiquid_WithLocalization = (
             : undefined,
         info:
           "info" in setting
-            ? noLocales && setting.info.length < 500
+            ? (noLocales || (setting.info.length < 4 && /^[^\w]/gi.test(setting.info))) &&
+              setting.info.length < 500
               ? setting.info
               : sectionLocaleCount[toSnakeCase(setting.info)]?.length > 1
               ? `t:sections.all.${toSnakeCase(setting.info)}`
@@ -63,7 +64,7 @@ export const sectionToLiquid_WithLocalization = (
             : undefined,
         placeholder:
           "placeholder" in setting && typeof setting.placeholder === "string"
-            ? noLocales
+            ? noLocales || (setting.placeholder.length < 4 && /^[^\w]/gi.test(setting.placeholder))
               ? setting.placeholder
               : sectionLocaleCount[toSnakeCase(setting.placeholder)]?.length > 1
               ? `t:sections.all.${toSnakeCase(setting.placeholder)}`
@@ -76,7 +77,9 @@ export const sectionToLiquid_WithLocalization = (
               : setting.options.map((option, index) => ({
                   ...option,
                   label:
-                    sectionLocaleCount[toSnakeCase(option.label)]?.length > 1
+                    option.label.length < 4 && /^[^\w]/gi.test(option.label)
+                      ? option.label
+                      : sectionLocaleCount[toSnakeCase(option.label)]?.length > 1
                       ? `t:sections.all.${toSnakeCase(option.label)}`
                       : `${settingsBase}.${setting.id}.options__${index + 1}.label`,
                 }))
