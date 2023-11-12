@@ -719,7 +719,7 @@ export const generateLiquidFiles = (folder: string) => {
         const targetFile = source.find((sourcePath) =>
           sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
         );
-        if (fileName.includes("_translations.liquid")) {
+        if (fileName.includes("_layout.translations.liquid")) {
           continue;
         }
         if (!targetFile) {

@@ -259,7 +259,12 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
     localesFile = process.env.SHOPIFY_CMS_LOCALES;
   }
   const translationsPath = path.join(process.cwd(), folder, "locales", localesFile);
-  const translationJsPath = path.join(process.cwd(), folder, "snippets", "_translations.liquid");
+  const translationJsPath = path.join(
+    process.cwd(),
+    folder,
+    "snippets",
+    "_layout.translations.liquid"
+  );
   const translationTypesPath = path.join(process.cwd(), "@types", "translations.ts");
 
   function isObject(x: any): x is Object {
@@ -307,7 +312,7 @@ declare global {
         const targetFile = snippets.find((sourcePath) =>
           sourcePath.split(/[\\/]/gi).at(-1).includes(fileName)
         );
-        if (fileName.includes("_translations.liquid")) {
+        if (fileName.includes("_layout.translations.liquid")) {
           continue;
         }
         if (!targetFile) {
