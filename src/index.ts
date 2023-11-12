@@ -767,7 +767,9 @@ export const isSnippet = (name) =>
   /sections[\\/][^\\/]*[\\/][^.]*\.[^.]*\.liquid$/gi.test(name) ||
   /snippets[\\/][^\\/]*\.liquid$/gi.test(name);
 
-export const isLayout = (name) => /layout[\\/][^\\/]*\.liquid$/gi.test(name);
+export const isLayout = (name) => {
+  return /^layout[\\/][^\\/]*\.liquid$/gi.test(name);
+};
 
 export const isSectionGroup = (name) => /sections[\\/]sections[\\/][^\\/]*\.json$/gi.test(name);
 
