@@ -316,7 +316,12 @@ export const init = async () => {
           );
         }
 
-        if (isSection(name) || isSnippet(name) || isLayout(name) || isGiftCard(name)) {
+        if (
+          isSection(name) ||
+          isSnippet(name) ||
+          isLayout(name.replace(`${root}\\`, "")) ||
+          isGiftCard(name)
+        ) {
           Object.keys(require.cache).forEach((path) => {
             if (
               path.includes(sectionsFolder) ||
