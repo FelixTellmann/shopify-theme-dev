@@ -427,6 +427,7 @@ type ShopifySectionDefault<T = never> = {
 
 type ShopifySectionPreset<T = unknown> = {
   name: string;
+  category?: string;
   blocks?: T extends { blocks: Array<any> }
     ? MapBlocksPreset<T>[keyof MapBlocksPreset<T>][]
     : never;
