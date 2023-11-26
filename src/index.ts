@@ -776,7 +776,8 @@ export const isLayout = (name) => {
   return /^layout[\\/][^\\/]*\.liquid$/gi.test(name);
 };
 
-export const isSectionGroup = (name) => /sections[\\/]sections[\\/][^\\/]*\.json$/gi.test(name);
+export const isSectionGroup = (name) =>
+  /templates[\\/]section-groups[\\/][^\\/]*\.json$/gi.test(name);
 
 export const isConfig = (name) => /config[\\/][^\\/]*\.json$/gi.test(name);
 
