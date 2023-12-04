@@ -38,10 +38,18 @@ export const getSettingsType = (setting: ShopifySettingsInput) => {
       return "?: string";
     case "blog":
       return "?: _Blog_liquid | string";
-    case "collection":
-      return "?: _Collection_liquid | string";
-    case "collection_list":
+    case "collection": {
+      if (setting.id.includes("__handle_only")) {
+        return "?: string";
+      }
+      return "?: _Collection_liquid";
+    }
+    case "collection_list": {
+      if (setting.id.includes("__handle_only")) {
+        return "?: string[]";
+      }
       return "?: _Collection_liquid[]";
+    }
     case "color":
       return "?: _Color_liquid | string";
     case "color_background":
@@ -58,8 +66,12 @@ export const getSettingsType = (setting: ShopifySettingsInput) => {
       return "?: string";
     case "page":
       return "?: _Page_liquid | string";
-    case "product":
-      return "?: _Product_liquid | string";
+    case "product": {
+      if (setting.id.includes("__handle_only")) {
+        return "?: string";
+      }
+      return "?: _Product_liquid";
+    }
     case "product_list": {
       if (setting.id.includes("__handle_only")) {
         return "?: string[]";
@@ -110,11 +122,11 @@ export const getImports = (sections: { [T: string]: ShopifySection }) => {
       if (localTypes.includes("_Blog_liquid")) return;
       localTypes.push("_Blog_liquid");
     }
-    if (setting.type === "collection") {
+    if (setting.type === "collection" && !setting.id.includes("__handle_only")) {
       if (localTypes.includes("_Collection_liquid")) return;
       localTypes.push("_Collection_liquid");
     }
-    if (setting.type === "collection_list") {
+    if (setting.type === "collection_list" && !setting.id.includes("__handle_only")) {
       if (localTypes.includes("_Collection_liquid")) return;
       localTypes.push("_Collection_liquid");
     }
@@ -142,7 +154,7 @@ export const getImports = (sections: { [T: string]: ShopifySection }) => {
       if (localTypes.includes("_Page_liquid")) return;
       localTypes.push("_Page_liquid");
     }
-    if (setting.type === "product") {
+    if (setting.type === "product" && !setting.id.includes("__handle_only")) {
       if (localTypes.includes("_Product_liquid")) return;
       localTypes.push("_Product_liquid");
     }
