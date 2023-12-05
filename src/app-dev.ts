@@ -400,12 +400,93 @@ export const generateAppFiles = (srcFolder, outFolder, appBlockSchemas, sectionL
       translationArray.push(process.env.SHOPIFY_SECTIONS_BEFORE_RENDER);
     }
 
-    const rawContent = fs.readFileSync(
+    const sourceContent = fs.readFileSync(
       path.join(process.cwd(), srcFolder, "blocks", toKebabCase(key), `${toKebabCase(key)}.liquid`),
       {
         encoding: "utf-8",
       }
     );
+
+    const classNameRegex = /class([=:][_\w$]*)(["'`])([^"'`]+)\2/g;
+    const classNameWithClsxRegex = /class([=:][_\w$]*)\((.*?)\)([},])/g;
+
+    const result = sourceContent.replace(classNameRegex, (match, p1, p2, p3) => {
+      const liquid = [];
+      const nonLiquid = p3.replace(/(\{[{%]-?[^}]*-?[%}]})/gi, (m, g1) => {
+        liquid.push(g1);
+        return "";
+      });
+      const classNames = nonLiquid.replace(/\s+/gi, " ").split(" ");
+      const prefixedClassNames = classNames.map((className) => {
+        if (className.includes(":")) {
+          return className
+            .split(":")
+            .map((str, index, arr) => {
+              if ((str.match(/\[/g) || []).length !== (str.match(/]/g) || []).length) {
+                return str;
+              }
+              if (
+                str &&
+                index === arr.length - 1 &&
+                !str.startsWith("tw-") &&
+                !str.startsWith("!tw-")
+              ) {
+                if (/^!/gi.test(str)) {
+                  return `!tw-${str.replace(/^!/gi, "")}`;
+                }
+                return `tw-${str}`;
+              }
+              return str;
+            })
+            .join(":");
+        }
+        if (className) {
+          if (className.startsWith("tw-") || className.startsWith("!tw-")) {
+            return className;
+          } else {
+            if (/^!/gi.test(className)) {
+              return `!tw-${className.replace(/^!/gi, "")}`;
+            }
+            return `tw-${className}`;
+          }
+        }
+      });
+      return `class${p1}${p2}${prefixedClassNames.join(" ")}${liquid.join(" ")}${p2}`;
+    });
+
+    const rawContent = result.replace(classNameWithClsxRegex, (match, p1, p2, p3) => {
+      return `class${p1}(${p2.replace(/(["'`])([^"'`]+)\1/g, (match, p1, p2) => {
+        const classNames = p2.replace(/\s+/gi, " ").split(" ");
+        const prefixedClassNames = classNames.map((className) => {
+          if (className.includes(":")) {
+            return className
+              .split(":")
+              .map((str, index, arr) => {
+                if ((str.match(/\[/g) || []).length !== (str.match(/]/g) || []).length) {
+                  return str;
+                }
+                if (index === arr.length - 1 && !str.startsWith("tw-") && !str.startsWith("!tw-")) {
+                  if (/^!/gi.test(str)) {
+                    return `!tw-${str.replace(/^!/gi, "")}`;
+                  }
+                  return `tw-${str}`;
+                }
+                return str;
+              })
+              .join(":");
+          }
+          if (className.startsWith("tw-") || className.startsWith("!tw-")) {
+            return className;
+          } else {
+            if (/^!/gi.test(className)) {
+              return `!tw-${className.replace(/^!/gi, "")}`;
+            }
+            return `tw-${className}`;
+          }
+        });
+        return `${p1}${prefixedClassNames.join(" ")}${p1}`;
+      })})${p3}`;
+    });
 
     if (rawContent) {
       const translatedContent = rawContent.replace(
