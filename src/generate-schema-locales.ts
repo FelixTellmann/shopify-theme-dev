@@ -172,26 +172,20 @@ export const generateSchemaLocales = (
         name: section.name,
         settings: generateSectionSettings(section.settings, sectionLocaleCount),
         blocks: blocks.length
-          ? blocks?.reduce(
-              (acc, block) => {
-                acc[toSnakeCase(block.name)] = {
-                  name: block.name,
-                  settings: generateSectionSettings(block.settings, sectionLocaleCount),
-                };
-                return acc;
-              },
-              {}
-            )
+          ? blocks?.reduce((acc, block) => {
+              acc[toSnakeCase(block.name)] = {
+                name: block.name,
+                settings: generateSectionSettings(block.settings, sectionLocaleCount),
+              };
+              return acc;
+            }, {})
           : undefined,
-        presets: section.presets?.reduce(
-          (acc, preset) => {
-            acc[toSnakeCase(preset.name)] = {
-              name: preset.name,
-            };
-            return acc;
-          },
-          {}
-        ),
+        presets: section.presets?.reduce((acc, preset) => {
+          acc[toSnakeCase(preset.name)] = {
+            name: preset.name,
+          };
+          return acc;
+        }, {}),
       };
     });
   });
