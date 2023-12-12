@@ -47,7 +47,7 @@ export const sectionToLiquid_WithLocalization = (
         ...setting,
         label:
           "label" in setting
-            ? noLocales || (setting.label.length < 4 && /^[^\w]/gi.test(setting.label))
+            ? noLocales || (setting.label.length <= 8 && /^[^\w]/gi.test(setting.label))
               ? setting.label
               : sectionLocaleCount[toSnakeCase(setting.label)]?.length > 1
               ? `t:sections.all.${toSnakeCase(setting.label)}`
@@ -55,7 +55,7 @@ export const sectionToLiquid_WithLocalization = (
             : undefined,
         info:
           "info" in setting
-            ? (noLocales || (setting.info.length < 4 && /^[^\w]/gi.test(setting.info))) &&
+            ? (noLocales || (setting.info.length <= 8 && /^[^\w]/gi.test(setting.info))) &&
               setting.info.length < 500
               ? setting.info
               : sectionLocaleCount[toSnakeCase(setting.info)]?.length > 1
@@ -64,7 +64,7 @@ export const sectionToLiquid_WithLocalization = (
             : undefined,
         placeholder:
           "placeholder" in setting && typeof setting.placeholder === "string"
-            ? noLocales || (setting.placeholder.length < 4 && /^[^\w]/gi.test(setting.placeholder))
+            ? noLocales || (setting.placeholder.length <= 8 && /^[^\w]/gi.test(setting.placeholder))
               ? setting.placeholder
               : sectionLocaleCount[toSnakeCase(setting.placeholder)]?.length > 1
               ? `t:sections.all.${toSnakeCase(setting.placeholder)}`
@@ -77,7 +77,7 @@ export const sectionToLiquid_WithLocalization = (
               : setting.options.map((option, index) => ({
                   ...option,
                   label:
-                    option.label.length < 4 && /^[^\w]/gi.test(option.label)
+                    option.label.length <= 8 && /^[^\w]/gi.test(option.label)
                       ? option.label
                       : sectionLocaleCount[toSnakeCase(option.label)]?.length > 1
                       ? `t:sections.all.${toSnakeCase(option.label)}`
@@ -128,7 +128,7 @@ export const sectionToLiquid_WithLocalization = (
             ...setting,
             label:
               "label" in setting
-                ? noLocales || (setting.label.length < 4 && /^[^\w]/gi.test(setting.label))
+                ? noLocales || (setting.label.length <= 8 && /^[^\w]/gi.test(setting.label))
                   ? setting.label
                   : sectionLocaleCount[toSnakeCase(setting.label)]?.length > 1
                   ? `t:sections.all.${toSnakeCase(setting.label)}`
@@ -136,7 +136,7 @@ export const sectionToLiquid_WithLocalization = (
                 : undefined,
             info:
               "info" in setting
-                ? (noLocales || (setting.info.length < 4 && /^[^\w]/gi.test(setting.info))) &&
+                ? (noLocales || (setting.info.length <= 8 && /^[^\w]/gi.test(setting.info))) &&
                   setting.info.length < 500
                   ? setting.info
                   : sectionLocaleCount[toSnakeCase(setting.info)]?.length > 1
@@ -146,7 +146,7 @@ export const sectionToLiquid_WithLocalization = (
             placeholder:
               "placeholder" in setting && typeof setting.placeholder === "string"
                 ? noLocales ||
-                  (setting.placeholder.length < 4 && /^[^\w]/gi.test(setting.placeholder))
+                  (setting.placeholder.length <= 8 && /^[^\w]/gi.test(setting.placeholder))
                   ? setting.placeholder
                   : sectionLocaleCount[toSnakeCase(setting.placeholder)]?.length > 1
                   ? `t:sections.all.${toSnakeCase(setting.placeholder)}`
@@ -159,7 +159,7 @@ export const sectionToLiquid_WithLocalization = (
                   : setting.options.map((option, index) => ({
                       ...option,
                       label:
-                        option.label.length < 4 && /^[^\w]/gi.test(option.label)
+                        option.label.length <= 8 && /^[^\w]/gi.test(option.label)
                           ? option.label
                           : sectionLocaleCount[toSnakeCase(option.label)]?.length > 1
                           ? `t:sections.all.${toSnakeCase(option.label)}`

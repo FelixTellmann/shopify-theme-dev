@@ -22,7 +22,8 @@ export const generateThemeSettings = (settingsSchema: ShopifySettings, folder) =
             ...setting,
             content:
               "content" in setting
-                ? (noLocales || (setting.content.length < 4 && /^[^\w]/gi.test(setting.content))) &&
+                ? (noLocales ||
+                    (setting.content.length <= 8 && /^[^\w]/gi.test(setting.content))) &&
                   !setting.content.includes(" ")
                   ? setting.content
                   : `${settingsBase}.paragraph__${paragraphCount++}.content`
@@ -34,7 +35,8 @@ export const generateThemeSettings = (settingsSchema: ShopifySettings, folder) =
             ...setting,
             content:
               "content" in setting
-                ? (noLocales || (setting.content.length < 4 && /^[^\w]/gi.test(setting.content))) &&
+                ? (noLocales ||
+                    (setting.content.length <= 8 && /^[^\w]/gi.test(setting.content))) &&
                   !setting.content.includes(" ")
                   ? setting.content
                   : `${settingsBase}.header__${headerCount++}.content`
@@ -45,13 +47,13 @@ export const generateThemeSettings = (settingsSchema: ShopifySettings, folder) =
           ...setting,
           label:
             "label" in setting
-              ? noLocales || (setting.label.length < 4 && /^[^\w]/gi.test(setting.label))
+              ? noLocales || (setting.label.length <= 8 && /^[^\w]/gi.test(setting.label))
                 ? setting.label
                 : `${settingsBase}.${setting.id}.label`
               : undefined,
           info:
             "info" in setting
-              ? (noLocales || (setting.info.length < 4 && /^[^\w]/gi.test(setting.info))) &&
+              ? (noLocales || (setting.info.length <= 8 && /^[^\w]/gi.test(setting.info))) &&
                 setting.info.length < 500
                 ? setting.info
                 : `${settingsBase}.${setting.id}.info`
@@ -59,7 +61,7 @@ export const generateThemeSettings = (settingsSchema: ShopifySettings, folder) =
           placeholder:
             "placeholder" in setting
               ? noLocales ||
-                (setting.placeholder.length < 4 && /^[^\w]/gi.test(setting.placeholder))
+                (setting.placeholder.length <= 8 && /^[^\w]/gi.test(setting.placeholder))
                 ? setting.placeholder
                 : `${settingsBase}.${setting.id}.placeholder`
               : undefined,
@@ -70,7 +72,7 @@ export const generateThemeSettings = (settingsSchema: ShopifySettings, folder) =
                 : setting.options.map((option, index) => ({
                     ...option,
                     label:
-                      option.label.length < 4 && /^[^\w]/gi.test(option.label)
+                      option.label.length <= 8 && /^[^\w]/gi.test(option.label)
                         ? option.label
                         : `${settingsBase}.${setting.id}.options__${index + 1}.label`,
                   }))
