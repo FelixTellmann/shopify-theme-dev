@@ -5,11 +5,13 @@ export type ShopifyHeader = {
   content: string;
   type: "header";
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyParagraph = {
   content: string;
   type: "paragraph";
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 
 export type ShopifyColorThemeGroupDefinition =
@@ -87,6 +89,7 @@ export type ShopifyColorTheme = {
   label: string;
   default?: string;
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 
 export type ShopifyCheckbox = {
@@ -95,6 +98,7 @@ export type ShopifyCheckbox = {
   type: "checkbox";
   default?: boolean;
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyNumber = {
   id: string;
@@ -103,6 +107,7 @@ export type ShopifyNumber = {
   default?: number;
   info?: string;
   placeholder?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyRadio = {
   id: string;
@@ -111,6 +116,7 @@ export type ShopifyRadio = {
   type: "radio";
   default?: string;
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyRange = {
   default: number;
@@ -122,6 +128,7 @@ export type ShopifyRange = {
   type: "range";
   info?: string;
   unit?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifySelect = {
   id: string;
@@ -130,6 +137,7 @@ export type ShopifySelect = {
   type: "select";
   default?: string;
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyText = {
   id: string;
@@ -138,6 +146,7 @@ export type ShopifyText = {
   default?: string;
   info?: string;
   placeholder?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyTextarea = {
   id: string;
@@ -146,24 +155,28 @@ export type ShopifyTextarea = {
   default?: string;
   info?: string;
   placeholder?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyArticle = {
   id: string;
   label: string;
   type: "article";
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyBlog = {
   id: string;
   label: string;
   type: "blog";
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyCollection = {
   id: string;
   label: string;
   type: "collection";
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyCollection_list = {
   id: string;
@@ -171,6 +184,7 @@ export type ShopifyCollection_list = {
   type: "collection_list";
   info?: string;
   limit?: number;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyColor = {
   id: string;
@@ -178,6 +192,7 @@ export type ShopifyColor = {
   type: "color";
   default?: string;
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyColor_background = {
   id: string;
@@ -185,6 +200,7 @@ export type ShopifyColor_background = {
   type: "color_background";
   default?: string;
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyFont_picker = {
   default: string;
@@ -192,6 +208,7 @@ export type ShopifyFont_picker = {
   label: string;
   type: "font_picker";
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyFont = {
   id: string;
@@ -199,6 +216,7 @@ export type ShopifyFont = {
   type: "font";
   default?: string;
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyHtml = {
   id: string;
@@ -207,12 +225,14 @@ export type ShopifyHtml = {
   default?: string;
   info?: string;
   placeholder?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyImage_picker = {
   id: string;
   label: string;
   type: "image_picker";
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyLink_list = {
   id: string;
@@ -220,24 +240,28 @@ export type ShopifyLink_list = {
   type: "link_list";
   default?: "main-menu" | "footer" | string;
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyLiquid = {
   id: string;
   label: string;
   type: "liquid";
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyPage = {
   id: string;
   label: string;
   type: "page";
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyProduct = {
   id: string;
   label: string;
   type: "product";
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyProduct_list = {
   id: string;
@@ -245,6 +269,7 @@ export type ShopifyProduct_list = {
   type: "product_list";
   info?: string;
   limit?: number;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyRichtext = {
   id: string;
@@ -252,6 +277,7 @@ export type ShopifyRichtext = {
   type: "richtext";
   default?: `<${_BlockTag}${string}</${_BlockTag}>`;
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyInlineRichtext = {
   id: string;
@@ -259,6 +285,7 @@ export type ShopifyInlineRichtext = {
   type: "inline_richtext";
   default?: string;
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyUrl = {
   id: string;
@@ -266,6 +293,7 @@ export type ShopifyUrl = {
   type: "url";
   default?: string;
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyVideo_url = {
   accept: ("youtube" | "vimeo")[];
@@ -275,6 +303,7 @@ export type ShopifyVideo_url = {
   default?: string;
   info?: string;
   placeholder?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyTextAlignment = {
   id: string;
@@ -282,6 +311,7 @@ export type ShopifyTextAlignment = {
   type: "text_alignment";
   default?: "left" | "center" | "right";
   info?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 
 export type ShopifyVideo = {
@@ -291,6 +321,7 @@ export type ShopifyVideo = {
   default?: string;
   info?: string;
   placeholder?: string;
+  col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 
 export type ShopifySettingsInput =
