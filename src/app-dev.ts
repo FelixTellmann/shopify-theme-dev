@@ -16,7 +16,7 @@ import { initAppExtensionFolders } from "./init-app-extension-folders";
 import { initShopifyTypes } from "./init-shopify-types";
 import { ShopifyAppBlock, ShopifySection, ShopifySettings } from "types/shopify";
 import { createMetafieldTypes } from "./create-metafield-types";
-import { getAllFiles, getLocaleCount, getSectionSchemas, getSettingsSchemas } from "./index";
+import { getAllFiles, getLocaleCount, getSectionSchemas, getSettingsSchemas, isGiftCard, isLayout, isSection, isSettingUpdate } from "./index";
 
 const watch = require("node-watch");
 
@@ -25,13 +25,18 @@ require("dotenv").config();
 const program = new Command();
 program.version(require(path.join("./../", "package.json")).version).parse(process.argv);
 
-const { SHOPIFY_APP_EXTENSION_OUT_FOLDER, SHOPIFY_APP_EXTENSION_SRC } = process.env;
+const {
+  SHOPIFY_APP_EXTENSION_OUT_FOLDER,
+  SHOPIFY_APP_EXTENSION_SRC,
+  SHOPIFY_APP_CHECKOUT_EXTENSION_SRC,
+} = process.env;
 
 export const appDev = async () => {
   const root = process.cwd();
   const assetsFolder = path.join(root, SHOPIFY_APP_EXTENSION_SRC, "assets");
   const blocksFolder = path.join(root, SHOPIFY_APP_EXTENSION_SRC, "blocks");
   const snippetsFolder = path.join(root, SHOPIFY_APP_EXTENSION_SRC, "snippets");
+  const checkoutExtensionsFolder = path.join(root, SHOPIFY_APP_CHECKOUT_EXTENSION_SRC);
 
   console.log(
     `[${chalk.gray(new Date().toLocaleTimeString())}]: ${chalk.magentaBright(
@@ -44,6 +49,52 @@ export const appDev = async () => {
 
   initAppExtensionFolders(SHOPIFY_APP_EXTENSION_OUT_FOLDER);
   createMetafieldTypes();
+
+  if (fs.existsSync(checkoutExtensionsFolder)) {
+    const sectionRegex = new RegExp(
+      `${SHOPIFY_APP_CHECKOUT_EXTENSION_SRC}([\\\\/])[^\\\\/]*([\\\\/])schema.ts$`,
+      "gi"
+    );
+    watch([checkoutExtensionsFolder], { recursive: true }, async (evt, name) => {
+      const startTime = Date.now();
+
+      if (!sectionRegex.test(name)) return;
+
+      Object.keys(require.cache).forEach((path) => {
+        if (path.includes(checkoutExtensionsFolder)) {
+          decache(path);
+          delete require.cache[path];
+        }
+      });
+
+      const allFiles = getAllFiles(SHOPIFY_APP_CHECKOUT_EXTENSION_SRC);
+
+      const sections: { [T: string]: ShopifySection } = allFiles
+        .filter((name) => {
+          return name.toLowerCase().includes("schema.ts");
+        })
+        .reduce(
+          (acc, file, index, arr) => {
+            try {
+              const filename = path.join(process.cwd(), file);
+              const data = require(filename);
+              return { ...acc, ...data };
+            } catch (err) {
+              console.log(chalk.redBright(err.message));
+              return acc;
+            }
+          },
+          {} as { [T: string]: ShopifySection }
+        );
+
+      generateSectionsTypes(sections);
+      console.log(
+        `[${chalk.gray(new Date().toLocaleTimeString())}]: [${chalk.magentaBright(
+          `${Date.now() - startTime}ms`
+        )}] ${chalk.cyan(`File modified: ${name.replace(process.cwd(), "")}`)}`
+      );
+    });
+  }
 
   if (fs.existsSync(blocksFolder) && fs.existsSync(snippetsFolder)) {
     watch([blocksFolder, snippetsFolder], { recursive: true }, async (evt, name) => {
