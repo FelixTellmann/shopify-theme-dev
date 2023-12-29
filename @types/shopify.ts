@@ -456,6 +456,23 @@ export type ShopifySectionDefault<T = never> = {
     : { [T: string]: string | number | boolean } | undefined;
 };
 
+type MapBlockContent<T extends { blocks: ShopifySectionBlock[] }> = {
+  [B in Extract<T["blocks"][number], { type: string }>["type"]]: {
+    id: string;
+    type: B;
+    settings: Partial<MapSettings<Extract<T["blocks"][number], { type: B }>>>;
+  };
+};
+
+export type ShopifySectionDefaultGuaranteed<T = never> = {
+  blocks: T extends { blocks: Array<any> } ? MapBlockContent<T>[keyof MapBlockContent<T>][] : [];
+  settings: T extends never
+    ? { [T: string]: string | number | boolean }
+    : T extends { settings: any }
+    ? Partial<T["settings"]>
+    : { [T: string]: string | number | boolean };
+};
+
 type ShopifySectionPreset<T = unknown> = {
   name: string;
   blocks?: T extends { blocks: Array<any> }
