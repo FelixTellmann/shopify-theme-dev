@@ -445,7 +445,7 @@ type MapBlocksPreset<T extends { blocks: ShopifySectionBlock[] }> = {
   };
 };
 
-type ShopifySectionDefault<T = never> = {
+export type ShopifySectionDefault<T = never> = {
   blocks?: T extends { blocks: Array<any> }
     ? MapBlocksPreset<T>[keyof MapBlocksPreset<T>][] | undefined
     : never;
@@ -513,6 +513,7 @@ export type ShopifySection<T = never> = {
       [V: string]: string;
     };
   };
+  sidebar?: { title: string; subtitle: string };
   disabled_block_files?: boolean;
   generate_block_files?: T extends { blocks: any } ? T["blocks"][number]["type"][] : string[];
   disabled?: boolean;
