@@ -563,7 +563,14 @@ export const generateAppFiles = (srcFolder, outFolder, appBlockSchemas, sectionL
 };
 
 export const appBlockToLiquid_WithLocalization = (
-  { name, disabled_block_files, generate_block_files, ...section }: ShopifySection,
+  {
+    name,
+    disabled_block_files,
+    generate_block_files,
+    path,
+    folder,
+    ...section
+  }: ShopifySection & { path: string; folder: string },
   key,
   sectionLocaleCount: { [T: string]: string[] }
 ) => {

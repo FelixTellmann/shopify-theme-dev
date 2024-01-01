@@ -595,7 +595,15 @@ export const getSectionSchemas = () => {
         try {
           const filename = path.join(process.cwd(), file);
           const data = require(filename);
-          return { ...acc, ...data };
+
+          return {
+            ...acc,
+            ...Object.entries(data).reduce((acc2, [key, val]) => {
+              // @ts-ignore
+              acc2[key] = { ...val, folder: filename.split(/[\\/]/gi).at(-2), path: filename };
+              return acc2;
+            }, {}),
+          };
         } catch (err) {
           console.log(chalk.redBright(err.message));
           return acc;

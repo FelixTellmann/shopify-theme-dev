@@ -15,7 +15,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
     const section = sectionsSchemas[key];
     if (section.disabled) continue;
 
-    const sectionName = `${toKebabCase(key)}.liquid`;
+    const sectionName = `${section.folder}.liquid`;
     const sectionPath = path.join(process.cwd(), folder, "sections", sectionName);
 
     const translationArray = [];
@@ -24,7 +24,7 @@ export const generateThemeFiles = (folder, sectionsSchemas, sectionLocaleCount) 
     }
 
     const rawContent = fs.readFileSync(
-      path.join(process.cwd(), "sections", toKebabCase(key), `${toKebabCase(key)}.liquid`),
+      path.join(process.cwd(), "sections", section.folder, `${section.folder}.liquid`),
       {
         encoding: "utf-8",
       }

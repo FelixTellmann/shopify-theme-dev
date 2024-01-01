@@ -2,7 +2,15 @@ import { ShopifySection } from "types/shopify";
 import { toSnakeCase } from "./../utils/to-snake-case";
 
 export const sectionToLiquid_WithLocalization = (
-  { name, disabled_block_files, generate_block_files, disabled, ...section }: ShopifySection,
+  {
+    name,
+    disabled_block_files,
+    generate_block_files,
+    disabled,
+    path,
+    folder,
+    ...section
+  }: ShopifySection & { path: string; folder: string },
   key,
   sectionLocaleCount: { [T: string]: string[] }
 ) => {

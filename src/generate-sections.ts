@@ -10,7 +10,7 @@ import { toKebabCase } from "./../utils/to-kebab-case";
 export const sectionToLiquid = ({ disabled_block_files, ...section }, key) => {
   return `
 ${process.env.SHOPIFY_SECTIONS_BEFORE_RENDER}
-{% render "s.${toKebabCase(key)}" %}
+{% render "s.${section.folder}" %}
 ${process.env.SHOPIFY_SECTIONS_AFTER_RENDER}
 {% schema %}
 ${JSON.stringify(section, undefined, 2)}
@@ -184,7 +184,7 @@ export const getImports = (sections: { [T: string]: ShopifySection }) => {
 };
 
 export const sectionToTypes = (section, key) => {
-  const filename = toKebabCase(section.name);
+  const filename = section.folder;
   const arr = [];
   const settings: ShopifySettingsInput[] = section.settings
     ?.filter((s) => s.type !== "header" && s.type !== "paragraph")
@@ -441,7 +441,7 @@ export const RESERVED_VARIABLES = [
 ];
 
 export const updateSectionsSettings = (sections: {
-  [T: string]: ShopifySection<{ blocks: any; settings: any }>;
+  [T: string]: ShopifySection<{ blocks: any; settings: any }> & { path: string; folder: string };
 }) => {
   for (const key in sections) {
     const section = sections[key];
@@ -449,8 +449,8 @@ export const updateSectionsSettings = (sections: {
     const sectionPath = path.join(
       process.cwd(),
       "sections",
-      toKebabCase(key),
-      `${toKebabCase(key)}.liquid`
+      section.folder,
+      `${section.folder}.liquid`
     );
 
     const start = "{%- comment -%} Auto Generated Variables start {%- endcomment -%}";
@@ -534,8 +534,8 @@ export const updateSectionsSettings = (sections: {
       const blockPath = path.join(
         process.cwd(),
         "sections",
-        toKebabCase(key),
-        `${toKebabCase(key)}.${block.type}.liquid`
+        section.folder,
+        `${section.folder}.${block.type}.liquid`
       );
 
       const blockVariables = [start];
