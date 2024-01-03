@@ -324,7 +324,7 @@ export type ShopifyVideo = {
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 
-export type ShopifySettingsInput =
+export type ShopifySettingsInput = (
   | ShopifyCheckbox
   | ShopifyNumber
   | ShopifyRadio
@@ -354,7 +354,29 @@ export type ShopifySettingsInput =
   | ShopifyVideo_url
   | ShopifyColorTheme
   | ShopifyColorThemeGroup
-  | ShopifyTextAlignment;
+  | ShopifyTextAlignment
+) & {
+  show_conditionally?:
+    | {
+        key: string;
+        eq?: any;
+        not?: any;
+        contains?: string;
+        gt?: number;
+        lt?: number;
+        gte?: number;
+        lte?: number;
+      }
+    | {
+        AND?:
+          | ShopifySettingsInput["show_conditionally"]
+          | ShopifySettingsInput["show_conditionally"][];
+        OR?: ShopifySettingsInput["show_conditionally"][];
+        NOT?:
+          | ShopifySettingsInput["show_conditionally"]
+          | ShopifySettingsInput["show_conditionally"][];
+      };
+};
 
 type ExtractSettings<T extends ShopifySection | ShopifySectionBlock> = Extract<
   /* @ts-ignore*/
