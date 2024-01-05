@@ -18,11 +18,9 @@ export type ShopifyHeader = {
         gte?: number;
         lte?: number;
       }
-    | {
-        AND?: ShopifyHeader["show_conditionally"] | ShopifyHeader["show_conditionally"][];
-        OR?: ShopifyHeader["show_conditionally"][];
-        NOT?: ShopifyHeader["show_conditionally"] | ShopifyHeader["show_conditionally"][];
-      };
+    | { AND?: ShopifyHeader["show_conditionally"][] }
+    | { OR?: ShopifyHeader["show_conditionally"][] }
+    | { NOT?: ShopifyHeader["show_conditionally"][] };
 };
 
 export type ShopifyParagraph = {
@@ -42,11 +40,9 @@ export type ShopifyParagraph = {
         gte?: number;
         lte?: number;
       }
-    | {
-        AND?: ShopifyParagraph["show_conditionally"] | ShopifyParagraph["show_conditionally"][];
-        OR?: ShopifyParagraph["show_conditionally"][];
-        NOT?: ShopifyParagraph["show_conditionally"] | ShopifyParagraph["show_conditionally"][];
-      };
+    | { AND?: ShopifyParagraph["show_conditionally"][] }
+    | { OR?: ShopifyParagraph["show_conditionally"][] }
+    | { NOT?: ShopifyParagraph["show_conditionally"][] };
 };
 
 export type ShopifyColorThemeGroupDefinition =
@@ -142,6 +138,8 @@ export type ShopifyNumber = {
   default?: number;
   info?: string;
   placeholder?: string;
+  prefix?: string;
+  suffix?: string;
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyRadio = {
@@ -181,6 +179,8 @@ export type ShopifyText = {
   default?: string;
   info?: string;
   placeholder?: string;
+  prefix?: string;
+  suffix?: string;
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyTextarea = {
@@ -402,15 +402,9 @@ export type ShopifySettingsInput = (
         gte?: number;
         lte?: number;
       }
-    | {
-        AND?:
-          | ShopifySettingsInput["show_conditionally"]
-          | ShopifySettingsInput["show_conditionally"][];
-        OR?: ShopifySettingsInput["show_conditionally"][];
-        NOT?:
-          | ShopifySettingsInput["show_conditionally"]
-          | ShopifySettingsInput["show_conditionally"][];
-      };
+    | { AND?: ShopifySettingsInput["show_conditionally"][] }
+    | { OR?: ShopifySettingsInput["show_conditionally"][] }
+    | { NOT?: ShopifySettingsInput["show_conditionally"][] };
 };
 
 type ExtractSettings<T extends ShopifySection | ShopifySectionBlock> = Extract<
