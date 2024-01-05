@@ -140,6 +140,7 @@ export type ShopifyNumber = {
   placeholder?: string;
   prefix?: string;
   suffix?: string;
+  text_align?: "left" | "center" | "right";
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyRadio = {
@@ -181,6 +182,7 @@ export type ShopifyText = {
   placeholder?: string;
   prefix?: string;
   suffix?: string;
+  text_align?: "left" | "center" | "right";
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 export type ShopifyTextarea = {
