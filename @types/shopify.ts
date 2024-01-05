@@ -6,12 +6,47 @@ export type ShopifyHeader = {
   type: "header";
   info?: string;
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+} & {
+  show_conditionally?:
+    | {
+        key: string;
+        eq?: any;
+        not?: any;
+        contains?: string;
+        gt?: number;
+        lt?: number;
+        gte?: number;
+        lte?: number;
+      }
+    | {
+        AND?: ShopifyHeader["show_conditionally"] | ShopifyHeader["show_conditionally"][];
+        OR?: ShopifyHeader["show_conditionally"][];
+        NOT?: ShopifyHeader["show_conditionally"] | ShopifyHeader["show_conditionally"][];
+      };
 };
+
 export type ShopifyParagraph = {
   content: string;
   type: "paragraph";
   info?: string;
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+} & {
+  show_conditionally?:
+    | {
+        key: string;
+        eq?: any;
+        not?: any;
+        contains?: string;
+        gt?: number;
+        lt?: number;
+        gte?: number;
+        lte?: number;
+      }
+    | {
+        AND?: ShopifyParagraph["show_conditionally"] | ShopifyParagraph["show_conditionally"][];
+        OR?: ShopifyParagraph["show_conditionally"][];
+        NOT?: ShopifyParagraph["show_conditionally"] | ShopifyParagraph["show_conditionally"][];
+      };
 };
 
 export type ShopifyColorThemeGroupDefinition =
