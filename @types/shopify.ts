@@ -101,7 +101,7 @@ export type ShopifyColorThemeGroup = {
     links: ShopifyColorThemeRole;
     icons: ShopifyColorThemeRole;
   };
-};
+} & AppDevGlobalSettings;
 
 export type ShopifyColorTheme = {
   type: "color_scheme";
@@ -109,7 +109,7 @@ export type ShopifyColorTheme = {
   label: string;
   default?: string;
   info?: string;
-};
+} & AppDevGlobalSettings;
 
 export type ShopifyCheckbox = {
   id: string;
@@ -117,7 +117,7 @@ export type ShopifyCheckbox = {
   type: "checkbox";
   default?: boolean;
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyNumber = {
   id: string;
   label: string;
@@ -128,7 +128,7 @@ export type ShopifyNumber = {
   prefix?: string;
   suffix?: string;
   text_align?: "left" | "center" | "right";
-};
+} & AppDevGlobalSettings;
 export type ShopifyRadio = {
   id: string;
   label: string;
@@ -136,7 +136,7 @@ export type ShopifyRadio = {
   type: "radio";
   default?: string;
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyRange = {
   default: number;
   id: string;
@@ -147,7 +147,7 @@ export type ShopifyRange = {
   type: "range";
   info?: string;
   unit?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifySelect = {
   id: string;
   label: string;
@@ -155,7 +155,7 @@ export type ShopifySelect = {
   type: "select";
   default?: string;
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyText = {
   id: string;
   label: string;
@@ -166,7 +166,7 @@ export type ShopifyText = {
   prefix?: string;
   suffix?: string;
   text_align?: "left" | "center" | "right";
-};
+} & AppDevGlobalSettings;
 export type ShopifyTextarea = {
   id: string;
   label: string;
@@ -174,60 +174,60 @@ export type ShopifyTextarea = {
   default?: string;
   info?: string;
   placeholder?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyArticle = {
   id: string;
   label: string;
   type: "article";
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyBlog = {
   id: string;
   label: string;
   type: "blog";
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyCollection = {
   id: string;
   label: string;
   type: "collection";
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyCollection_list = {
   id: string;
   label: string;
   type: "collection_list";
   info?: string;
   limit?: number;
-};
+} & AppDevGlobalSettings;
 export type ShopifyColor = {
   id: string;
   label: string;
   type: "color";
   default?: string;
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyColor_background = {
   id: string;
   label: string;
   type: "color_background";
   default?: string;
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyFont_picker = {
   default: string;
   id: string;
   label: string;
   type: "font_picker";
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyFont = {
   id: string;
   label: string;
   type: "font";
   default?: string;
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyHtml = {
   id: string;
   label: string;
@@ -235,66 +235,66 @@ export type ShopifyHtml = {
   default?: string;
   info?: string;
   placeholder?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyImage_picker = {
   id: string;
   label: string;
   type: "image_picker";
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyLink_list = {
   id: string;
   label: string;
   type: "link_list";
   default?: "main-menu" | "footer" | string;
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyLiquid = {
   id: string;
   label: string;
   type: "liquid";
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyPage = {
   id: string;
   label: string;
   type: "page";
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyProduct = {
   id: string;
   label: string;
   type: "product";
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyProduct_list = {
   id: string;
   label: string;
   type: "product_list";
   info?: string;
   limit?: number;
-};
+} & AppDevGlobalSettings;
 export type ShopifyRichtext = {
   id: string;
   label: string;
   type: "richtext";
   default?: `<${_BlockTag}${string}</${_BlockTag}>`;
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyInlineRichtext = {
   id: string;
   label: string;
   type: "inline_richtext";
   default?: string;
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyUrl = {
   id: string;
   label: string;
   type: "url";
   default?: string;
   info?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyVideo_url = {
   accept: ("youtube" | "vimeo")[];
   id: string;
@@ -303,14 +303,14 @@ export type ShopifyVideo_url = {
   default?: string;
   info?: string;
   placeholder?: string;
-};
+} & AppDevGlobalSettings;
 export type ShopifyTextAlignment = {
   id: string;
   label: string;
   type: "text_alignment";
   default?: "left" | "center" | "right";
   info?: string;
-};
+} & AppDevGlobalSettings;
 
 export type ShopifyVideo = {
   id: string;
@@ -319,9 +319,9 @@ export type ShopifyVideo = {
   default?: string;
   info?: string;
   placeholder?: string;
-};
+} & AppDevGlobalSettings;
 
-export type ShopifySettingsInput = (
+export type ShopifySettingsInput =
   | ShopifyCheckbox
   | ShopifyNumber
   | ShopifyRadio
@@ -351,9 +351,7 @@ export type ShopifySettingsInput = (
   | ShopifyVideo_url
   | ShopifyColorTheme
   | ShopifyColorThemeGroup
-  | ShopifyTextAlignment
-) &
-  AppDevGlobalSettings;
+  | ShopifyTextAlignment;
 
 type ExtractSettings<T extends ShopifySection | ShopifySectionBlock> = Extract<
   /* @ts-ignore*/
