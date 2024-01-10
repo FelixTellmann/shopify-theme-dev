@@ -4,6 +4,7 @@ import { SettingsSchema } from "./settings";
 type AppDevGlobalSettings = {
   dynamic_default?: string;
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+  disabled?: boolean;
 } & {
   show_conditionally?:
     | {
