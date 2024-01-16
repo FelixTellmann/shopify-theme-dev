@@ -695,7 +695,13 @@ export const generateAppFiles = (srcFolder, outFolder, appBlockSchemas, sectionL
 };
 
 export const appBlockToLiquid_WithLocalization = (
-  { name, disabled_block_files, generate_block_files, ...section }: ShopifySection,
+  {
+    name,
+    disabled_block_files,
+    generate_block_files,
+    preview_description,
+    ...section
+  }: ShopifySection,
   key,
   sectionLocaleCount: { [T: string]: string[] }
 ) => {
@@ -763,7 +769,7 @@ export const appBlockToLiquid_WithLocalization = (
             : undefined,
       };
     }),
-    blocks: section.blocks?.map(({ name, ...block }) => {
+    blocks: section.blocks?.map(({ name, preview_description, ...block }) => {
       let paragraphCount = 1;
       let headerCount = 1;
 

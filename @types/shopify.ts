@@ -488,8 +488,9 @@ export type ShopifySectionBlock =
       type: string;
       limit?: number;
       settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
+      preview_description?: string;
     }
-  | { type: "@app"; limit?: never; name?: never; settings?: never };
+  | { type: "@app"; limit?: never; name?: never; settings?: never; preview_description?: string };
 
 export type ShopifyTemplateTypes =
   | "404"
@@ -530,6 +531,7 @@ export type ShopifySection<T = never> = {
   sidebar?: { title: string; subtitle: string };
   disabled_block_files?: boolean;
   generate_block_files?: T extends { blocks: any } ? T["blocks"][number]["type"][] : string[];
+  preview_description?: string;
   disabled?: boolean;
 } & (
   | {

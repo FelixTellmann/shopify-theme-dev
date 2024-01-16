@@ -83,7 +83,7 @@ export const sectionToLiquid_WithLocalization = (
             : undefined,
       };
     }),
-    blocks: section.blocks?.map(({ name, ...block }) => {
+    blocks: section.blocks?.map(({ name, preview_description, ...block }) => {
       let paragraphCount = 1;
       let headerCount = 1;
 
