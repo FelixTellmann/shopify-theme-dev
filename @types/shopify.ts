@@ -6,6 +6,20 @@ type AppDevGlobalSettings = {
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
   disabled?: boolean;
 } & {
+  validation?:
+    | {
+        key: string;
+        eq?: any;
+        not?: any;
+        contains?: string;
+        gt?: number;
+        lt?: number;
+        gte?: number;
+        lte?: number;
+      }
+    | { AND?: AppDevGlobalSettings["validation"][] }
+    | { OR?: AppDevGlobalSettings["validation"][] }
+    | { NOT?: AppDevGlobalSettings["validation"][] };
   show_conditionally?:
     | {
         key: string;
