@@ -6,20 +6,62 @@ type AppDevGlobalSettings = {
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
   disabled?: boolean;
 } & {
-  validation?:
+  validation?: {
+    error_message: string;
+  } & (
     | {
-        key: string;
-        eq?: any;
-        not?: any;
-        contains?: string;
-        gt?: number;
-        lt?: number;
-        gte?: number;
-        lte?: number;
+        eq:
+          | {
+              key: string;
+            }
+          | { value: any };
       }
-    | { AND?: AppDevGlobalSettings["validation"][] }
-    | { OR?: AppDevGlobalSettings["validation"][] }
-    | { NOT?: AppDevGlobalSettings["validation"][] };
+    | {
+        not:
+          | {
+              key: string;
+            }
+          | { value: any };
+      }
+    | {
+        contains:
+          | {
+              key: string;
+            }
+          | { value: any };
+      }
+    | {
+        gt:
+          | {
+              key: string;
+            }
+          | { value: number };
+      }
+    | {
+        lt:
+          | {
+              key: string;
+            }
+          | { value: number };
+      }
+    | {
+        gte:
+          | {
+              key: string;
+            }
+          | { value: number };
+      }
+    | {
+        lte:
+          | {
+              key: string;
+            }
+          | { value: number };
+      }
+    | { AND: AppDevGlobalSettings["validation"][] }
+    | { OR: AppDevGlobalSettings["validation"][] }
+    | { NOT: AppDevGlobalSettings["validation"][] }
+  );
   show_conditionally?:
     | {
         key: string;
@@ -477,6 +519,7 @@ type MapBlockContent<T extends { blocks: ShopifySectionBlock[] }> = {
 
 export type ShopifySectionDefaultGuaranteed<T = never> = {
   blocks: T extends { blocks: Array<any> } ? MapBlockContent<T>[keyof MapBlockContent<T>][] : [];
+  errors: { [T: string]: string | null };
   settings: T extends never
     ? { [T: string]: string | number | boolean }
     : T extends { settings: any }
