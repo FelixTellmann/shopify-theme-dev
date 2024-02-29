@@ -5,6 +5,7 @@ type AppDevGlobalSettings = {
   dynamic_default?: string;
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
   disabled?: boolean;
+  required?: boolean;
 } & {
   validation?: {
     error_message: string;
@@ -212,6 +213,15 @@ export type ShopifySelect = {
   default?: string;
   info?: string;
 } & AppDevGlobalSettings;
+export type ShopifyMultiSelect = {
+  id: string;
+  label: string;
+  options: { label: string; value: string; group?: string }[];
+  type: "multi_select";
+  placeholder?: string;
+  default?: string[];
+  info?: string;
+} & AppDevGlobalSettings;
 export type ShopifyText = {
   id: string;
   label: string;
@@ -342,6 +352,7 @@ export type ShopifyInlineRichtext = {
   label: string;
   type: "inline_richtext";
   default?: string;
+  placeholder?: string;
   info?: string;
 } & AppDevGlobalSettings;
 export type ShopifyUrl = {
@@ -383,6 +394,7 @@ export type ShopifySettingsInput =
   | ShopifyRadio
   | ShopifyRange
   | ShopifySelect
+  | ShopifyMultiSelect
   | ShopifyText
   | ShopifyTextarea
   | ShopifyArticle
@@ -546,6 +558,7 @@ export type ShopifySectionBlock =
       limit?: number;
       settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
       preview_description?: string;
+      required?: boolean | number;
     }
   | { type: "@app"; limit?: never; name?: never; settings?: never; preview_description?: string };
 

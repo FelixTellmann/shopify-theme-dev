@@ -53,7 +53,11 @@ export function getLocaleCount(sections: { [p: string]: ShopifySection }) {
         if (setting.type === "color_scheme_group") {
           return;
         }
-        if (setting.type === "select" || setting.type === "radio") {
+        if (
+          setting.type === "select" ||
+          setting.type === "multi_select" ||
+          setting.type === "radio"
+        ) {
           setting.options.forEach((option, index) => {
             const [key, value] = [toSnakeCase(option.label), option.label];
             if (entries[key]) {
@@ -111,7 +115,11 @@ export function getLocaleCount(sections: { [p: string]: ShopifySection }) {
         }
 
         if (setting?.id) {
-          if (setting.type === "select" || setting.type === "radio") {
+          if (
+            setting.type === "select" ||
+            setting.type === "multi_select" ||
+            setting.type === "radio"
+          ) {
             setting.options.forEach((option, index) => {
               const [key, value] = [toSnakeCase(option.label), option.label];
               if (entries[key]) {

@@ -32,6 +32,8 @@ export const getSettingsType = (setting: ShopifySettingsInput) => {
       return ": number";
     case "select":
       return `: ${setting.options.map(({ value }) => `"${value}"`).join(" | ")}`;
+    case "multi_select":
+      return `: (${setting.options.map(({ value }) => `"${value}"`).join(" | ")})[]`;
     case "text":
       return "?: string";
     case "textarea":
@@ -90,7 +92,7 @@ export const getSettingsType = (setting: ShopifySettingsInput) => {
     case "richtext":
       return "?: `<${_BlockTag}${string}</${_BlockTag}>`";
     case "inline_richtext":
-      return "?: string";
+      return "?: { value: string, json: { insert: string, attributes?: { link?: string; bold?: boolean; italic?: boolean } }[] }";
     case "url":
       return "?: string";
     case "video":

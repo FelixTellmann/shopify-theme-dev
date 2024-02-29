@@ -28,7 +28,11 @@ const generateSettings = (settings) => {
       }
 
       if (setting?.id) {
-        if (setting.type === "select" || setting.type === "radio") {
+        if (
+          setting.type === "select" ||
+          setting.type === "multi_select" ||
+          setting.type === "radio"
+        ) {
           const options = setting.options.reduce(
             (acc, option, index) => {
               acc[`options__${index + 1}`] = {
@@ -92,7 +96,11 @@ export const generateSectionSettings = (
       }
 
       if (setting?.id) {
-        if (setting.type === "select" || setting.type === "radio") {
+        if (
+          setting.type === "select" ||
+          setting.type === "multi_select" ||
+          setting.type === "radio"
+        ) {
           const options = setting.options.reduce(
             (acc, option, index) => {
               const key = toSnakeCase(option.label);
@@ -172,26 +180,20 @@ export const generateSchemaLocales = (
         name: section.name,
         settings: generateSectionSettings(section.settings, sectionLocaleCount),
         blocks: blocks.length
-          ? blocks?.reduce(
-              (acc, block) => {
-                acc[toSnakeCase(block.name)] = {
-                  name: block.name,
-                  settings: generateSectionSettings(block.settings, sectionLocaleCount),
-                };
-                return acc;
-              },
-              {}
-            )
+          ? blocks?.reduce((acc, block) => {
+              acc[toSnakeCase(block.name)] = {
+                name: block.name,
+                settings: generateSectionSettings(block.settings, sectionLocaleCount),
+              };
+              return acc;
+            }, {})
           : undefined,
-        presets: section.presets?.reduce(
-          (acc, preset) => {
-            acc[toSnakeCase(preset.name)] = {
-              name: preset.name,
-            };
-            return acc;
-          },
-          {}
-        ),
+        presets: section.presets?.reduce((acc, preset) => {
+          acc[toSnakeCase(preset.name)] = {
+            name: preset.name,
+          };
+          return acc;
+        }, {}),
       };
     });
   });

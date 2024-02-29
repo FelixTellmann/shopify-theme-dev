@@ -26,7 +26,11 @@ const generateSettings = (settings) => {
       }
 
       if (setting?.id) {
-        if (setting.type === "select" || setting.type === "radio") {
+        if (
+          setting.type === "select" ||
+          setting.type === "multi_select" ||
+          setting.type === "radio"
+        ) {
           const options = setting.options.reduce(
             (acc, option, index) => {
               acc[`options__${index + 1}`] = {
@@ -75,26 +79,20 @@ export const generateSchemaLocales = (
         name: section.name,
         settings: generateSettings(section.settings),
         blocks: blocks.length
-          ? blocks?.reduce(
-              (acc, block) => {
-                acc[toSnakeCase(block.name)] = {
-                  name: block.name,
-                  settings: generateSettings(block.settings),
-                };
-                return acc;
-              },
-              {}
-            )
+          ? blocks?.reduce((acc, block) => {
+              acc[toSnakeCase(block.name)] = {
+                name: block.name,
+                settings: generateSettings(block.settings),
+              };
+              return acc;
+            }, {})
           : undefined,
-        presets: section.presets?.reduce(
-          (acc, preset) => {
-            acc[toSnakeCase(preset.name)] = {
-              name: preset.name,
-            };
-            return acc;
-          },
-          {}
-        ),
+        presets: section.presets?.reduce((acc, preset) => {
+          acc[toSnakeCase(preset.name)] = {
+            name: preset.name,
+          };
+          return acc;
+        }, {}),
       };
     });
   });
