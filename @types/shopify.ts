@@ -55,36 +55,36 @@ export type ShopifyColorThemeOptionalGradientRole<T extends string> = T extends 
 type ReservedNames = "background" | "primary_button" | "secondary_button";
 
 export type ShopifyColorThemeGroup = {
-  type: "color_scheme_group";
-  id: string;
   definition: ShopifyColorThemeGroupDefinition[];
+  id: string;
   role: {
     background: {
       solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
       gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
     };
+    icons: ShopifyColorThemeRole;
+    links: ShopifyColorThemeRole;
+    on_primary_button: ShopifyColorThemeRole;
+    on_secondary_button: ShopifyColorThemeRole;
     primary_button: {
       solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
       gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
     };
+    primary_button_border: ShopifyColorThemeRole;
     secondary_button: {
       solid: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
       gradient?: Extract<ShopifyColorThemeGroup["definition"][number], { id: string }>["id"];
     };
-    text: ShopifyColorThemeRole;
-    primary_button_border: ShopifyColorThemeRole;
     secondary_button_border: ShopifyColorThemeRole;
-    on_primary_button: ShopifyColorThemeRole;
-    on_secondary_button: ShopifyColorThemeRole;
-    links: ShopifyColorThemeRole;
-    icons: ShopifyColorThemeRole;
+    text: ShopifyColorThemeRole;
   };
+  type: "color_scheme_group";
 };
 
 export type ShopifyColorTheme = {
-  type: "color_scheme";
   id: string;
   label: string;
+  type: "color_scheme";
   default?: string;
   info?: string;
 };
@@ -259,6 +259,7 @@ export type ShopifyInlineRichtext = {
   type: "inline_richtext";
   default?: string;
   info?: string;
+  placeholder?: string;
 };
 export type ShopifyUrl = {
   id: string;
@@ -414,7 +415,7 @@ type MapBlocksPreset<T extends { blocks: ShopifySectionBlock[] }> = {
   };
 };
 
-type ShopifySectionDefault<T = never> = {
+export type ShopifySectionDefault<T = never> = {
   blocks?: T extends { blocks: Array<any> }
     ? MapBlocksPreset<T>[keyof MapBlocksPreset<T>][] | undefined
     : never;
@@ -423,6 +424,24 @@ type ShopifySectionDefault<T = never> = {
     : T extends { settings: any }
     ? Partial<T["settings"]> | undefined
     : { [T: string]: string | number | boolean } | undefined;
+};
+
+type MapBlockContent<T extends { blocks: ShopifySectionBlock[] }> = {
+  [B in Extract<T["blocks"][number], { type: string }>["type"]]: {
+    id: string;
+    settings: Partial<MapSettings<Extract<T["blocks"][number], { type: B }>>>;
+    type: B;
+  };
+};
+
+export type ShopifySectionDefaultGuaranteed<T = never> = {
+  blocks: T extends { blocks: Array<any> } ? MapBlockContent<T>[keyof MapBlockContent<T>][] : [];
+  errors: { [T: string]: string | null };
+  settings: T extends never
+    ? { [T: string]: string | number | boolean }
+    : T extends { settings: any }
+    ? Partial<T["settings"]>
+    : { [T: string]: string | number | boolean };
 };
 
 type ShopifySectionPreset<T = unknown> = {
@@ -473,30 +492,30 @@ export type ShopifySection<T = never> = {
   blocks?: ShopifySectionBlock[];
   class?: string;
   default?: ShopifySectionDefault<T>;
+  disabled?: boolean;
+  disabled_block_files?: boolean;
+  generate_block_files?: T extends { blocks: any } ? T["blocks"][number]["type"][] : string[];
   limit?: number;
-  max_blocks?: number;
-  presets?: ShopifySectionPreset<T>[];
-  settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
-  tag?: "article" | "aside" | "div" | "footer" | "header" | "section";
   locales?: {
     [T: string]: {
       [V: string]: string;
     };
   };
-  disabled_block_files?: boolean;
-  generate_block_files?: T extends { blocks: any } ? T["blocks"][number]["type"][] : string[];
-  disabled?: boolean;
+  max_blocks?: number;
+  presets?: ShopifySectionPreset<T>[];
+  settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
+  tag?: "article" | "aside" | "div" | "footer" | "header" | "section";
 } & (
   | {
       enabled_on?: {
-        templates?: ShopifyTemplateTypes[];
         groups?: string[];
+        templates?: ShopifyTemplateTypes[];
       };
     }
   | {
       disabled_on?: {
-        templates?: ShopifyTemplateTypes[];
         groups?: string[];
+        templates?: ShopifyTemplateTypes[];
       };
     }
 );
@@ -512,30 +531,30 @@ type ShopifyAppBlockDefault<T = never> = {
 export type ShopifyAppBlock<T = never> = {
   name: string;
   target: "section" | "head" | "body";
+  available_if?: `{{ app.metafields.${string}.${string} }}`;
   class?: string;
   default?: ShopifyAppBlockDefault<T>;
-  /* Max Settings: 25 - Max Content blocks: 6*/
-  settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
-  tag?: "article" | "aside" | "div" | "footer" | "header" | "section";
+  javascript?: string;
   locales?: {
     [T: string]: {
       [V: string]: string;
     };
   };
-  javascript?: string;
+  /* Max Settings: 25 - Max Content blocks: 6*/
+  settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
   stylesheet?: string;
-  available_if?: `{{ app.metafields.${string}.${string} }}`;
+  tag?: "article" | "aside" | "div" | "footer" | "header" | "section";
 } & (
   | {
       enabled_on?: {
-        templates?: ShopifyTemplateTypes[];
         groups?: string[];
+        templates?: ShopifyTemplateTypes[];
       };
     }
   | {
       disabled_on?: {
-        templates?: ShopifyTemplateTypes[];
         groups?: string[];
+        templates?: ShopifyTemplateTypes[];
       };
     }
 );
@@ -625,54 +644,128 @@ export type _Article_liquid = {
   moderated?: any;
 };
 
-export type _Variant_liquid_json = {
-  available: boolean;
-  barcode: string;
-  id: number;
-  inventory_policy: string;
-  inventory_quantity: number;
-  name: string;
-  option1: string;
-  options: string[];
-  price: number;
-  requires_shipping: boolean;
-  sku: string;
-  taxable: boolean;
-  title: string;
-  weight: number;
-  compare_at_price?: any;
-  featured_image?: any;
-  inventory_management?: any;
-  option2?: any;
-  option3?: any;
-  public_title?: any;
-};
-
 export type _Product_liquid_json = {
   available: boolean;
+  compare_at_price: number;
   compare_at_price_max: number;
   compare_at_price_min: number;
   compare_at_price_varies: boolean;
   content: string;
   created_at: string;
   description: string;
+  featured_image: string;
   handle: string;
   id: number;
-  images: any[];
+  images: string[];
+  media: _Media_liquid[];
   options: string[];
   price: number;
-  media: _Media_liquid[];
   price_max: number;
   price_min: number;
   price_varies: boolean;
   published_at: string;
-  tags: any[];
+  requires_selling_plan: boolean;
+  selling_plan_groups: _Product_Selling_plan_groups_json[];
+  tags: string[];
   title: string;
   type: string;
   variants: _Variant_liquid_json[];
   vendor: string;
-  compare_at_price?: any;
-  featured_image?: any;
+};
+export type NewProductVariantsFeatured_image = {
+  created_at: string;
+  height: number;
+  id: number;
+  position: number;
+  product_id: number;
+  src: string;
+  updated_at: string;
+  variant_ids: number[];
+  width: number;
+  alt?: any;
+};
+export type NewProductVariantsFeatured_mediaPreview_image = {
+  aspect_ratio: number;
+  height: number;
+  src: string;
+  width: number;
+};
+export type NewProductVariantsFeatured_media = {
+  id: number;
+  position: number;
+  preview_image: NewProductVariantsFeatured_mediaPreview_image;
+  alt?: any;
+};
+
+export type _Variant_liquid_json = {
+  available: boolean;
+  barcode: string;
+  compare_at_price: number;
+  featured_image: _Image_liquid;
+  featured_media: _Media_liquid;
+  id: number;
+  inventory_management: string;
+  name: string;
+  option1: string;
+  options: string[];
+  price: number;
+  public_title: string;
+  quantity_rule: {
+    increment: number;
+    min: number;
+    max?: any;
+  };
+  requires_selling_plan: boolean;
+  requires_shipping: boolean;
+  selling_plan_allocations: {
+    compare_at_price: number;
+    per_delivery_price: number;
+    price: number;
+    price_adjustments: {
+      position: number;
+      price: number;
+    }[];
+    selling_plan_group_id: string;
+    selling_plan_id: number;
+  }[];
+  sku: string;
+  taxable: boolean;
+  title: string;
+  weight: number;
+  option2?: any;
+  option3?: any;
+};
+
+export type _Product_Selling_plan_groups_json = {
+  id: string;
+  name: string;
+  options: {
+    name: string;
+    position: number;
+    values: string[];
+  }[];
+  selling_plans: {
+    checkout_charge: {
+      value: number;
+      value_type: string;
+    };
+    id: number;
+    name: string;
+    options: {
+      name: string;
+      position: number;
+      value: string;
+    }[];
+    price_adjustments: {
+      position: number;
+      value: number;
+      value_type: string;
+      order_count?: any;
+    }[];
+    recurring_deliveries: boolean;
+    description?: any;
+  }[];
+  app_id?: any;
 };
 
 export type _Metafield_liquid_product_reference = {
@@ -907,15 +1000,19 @@ export type _Product_liquid = {
   type: string;
   url: string;
   variants: _Variant_liquid[];
-  requires_selling_plan?: boolean;
-  selling_plan_groups?: _Product_selling_plan_groups_liquid[];
   vendor: string;
   compare_at_price?: number;
   featured_image?: string;
   featured_media?: _Media_liquid;
+  requires_selling_plan?: boolean;
+  selling_plan_groups?: _Product_selling_plan_groups_liquid[];
 };
 
 export type _Product_selling_plan_liquid = {
+  checkout_charge: {
+    value: number;
+    value_type: string;
+  };
   id: number;
   name: string;
   options: {
@@ -923,18 +1020,15 @@ export type _Product_selling_plan_liquid = {
     position: number;
     value: string;
   }[];
-  recurring_deliveries: boolean;
   price_adjustments: {
     position: number;
-    value_type: string;
     value: number;
+    value_type: string;
   }[];
-  checkout_charge: {
-    value_type: string;
-    value: number;
-  };
+  recurring_deliveries: boolean;
 };
 export type _Product_selling_plan_groups_liquid = {
+  app_id: string;
   id: string;
   name: string;
   options: {
@@ -943,7 +1037,6 @@ export type _Product_selling_plan_groups_liquid = {
     values: string[];
   }[];
   selling_plans: _Product_selling_plan_liquid[];
-  app_id: string;
 };
 
 export type _Media_liquid =
@@ -1198,6 +1291,7 @@ export type _Image_liquid = {
   width: number;
   focal_point?: string;
   media_type?: any;
+  position?: number;
   preview_image?: any;
   variants?: any;
 };
@@ -1326,6 +1420,53 @@ export type _Recommendations_liquid = {
   performed: boolean;
   products: _Product_liquid[];
   products_count: number;
+};
+
+export type RichtextSchema =
+  | {
+      type: "root";
+      children: RichtextSchema[];
+    }
+  | RichtextSchema_Paragraph
+  | RichtextSchema_Heading
+  | RichtextSchema_List
+  | RichtextSchema_ListItem
+  | RichtextSchema_Link
+  | RichtextSchema_Text;
+
+export type RichtextSchema_Paragraph = {
+  type: "paragraph";
+  children: RichtextSchema[];
+};
+export type RichtextSchema_Heading = {
+  type: "heading";
+  level: "1" | "2" | "3" | "4" | "5" | "6";
+  children: RichtextSchema[];
+};
+
+export type RichtextSchema_List = {
+  type: "list";
+  listType: "ordered" | "unordered";
+  children: RichtextSchema[];
+};
+
+export type RichtextSchema_ListItem = {
+  type: "list-item";
+  children: RichtextSchema[];
+};
+
+export type RichtextSchema_Link = {
+  type: "link";
+  children: RichtextSchema[];
+  url: string;
+  title: string;
+  target: string;
+};
+export type RichtextSchema_Text = {
+  type: "text";
+  value: string;
+  bold?: boolean;
+  italic?: boolean;
 };
 
 export type GlobalSettings = {
