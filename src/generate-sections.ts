@@ -189,7 +189,7 @@ export const sectionToTypes = (section, key) => {
   const filename = toKebabCase(section.name);
   const arr = [];
   const settings: ShopifySettingsInput[] = section.settings
-    ?.filter((s) => s.type !== "header" && s.type !== "paragraph")
+    ?.filter((s) => s.type !== "header" && s.type !== "paragraph" && s.type !== "divider")
     .sort((a, b) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0));
 
   arr.push(`export type ${capitalize(key)}Section = {`);
@@ -235,7 +235,7 @@ export const sectionToTypes = (section, key) => {
   if (section.blocks?.length) {
     section.blocks?.forEach((block) => {
       const blockSettings: ShopifySettingsInput[] = block?.settings
-        ?.filter((s) => s.type !== "header" && s.type !== "paragraph")
+        ?.filter((s) => s.type !== "header" && s.type !== "paragraph" && s.type !== "divider")
         .sort((a, b) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0));
 
       arr.push("");
@@ -462,7 +462,8 @@ export const updateSectionsSettings = (sections: {
     sectionVariables.push("{%- liquid");
 
     section.settings?.forEach((setting) => {
-      if (setting.type === "header" || setting.type === "paragraph") return;
+      if (setting.type === "header" || setting.type === "paragraph" || setting.type === "divider")
+        return;
       sectionVariables.push(
         `  assign ${
           RESERVED_VARIABLES.includes(setting.id) ? `_${setting.id}` : setting.id
@@ -544,7 +545,8 @@ export const updateSectionsSettings = (sections: {
       blockVariables.push("{%- liquid");
 
       block?.settings?.forEach((setting) => {
-        if (setting.type === "header" || setting.type === "paragraph") return;
+        if (setting.type === "header" || setting.type === "paragraph" || setting.type === "divider")
+          return;
         blockVariables.push(
           `  assign ${
             RESERVED_VARIABLES.includes(setting.id) ? `_${setting.id}` : setting.id

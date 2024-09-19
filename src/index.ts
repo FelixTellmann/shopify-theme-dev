@@ -4,18 +4,16 @@ import decache from "decache";
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { toSnakeCase } from "../utils/to-snake-case";
-import { generateThemeLayout } from "./generate-theme-layout";
-import { generateThemeSnippet } from "./generate-theme-snippets";
 import { ShopifySection, ShopifySettings } from "types/shopify";
+import { toSnakeCase } from "../utils/to-snake-case";
 import { createMetafieldTypes } from "./create-metafield-types";
+import { generateSchemaLocales } from "./generate-schema-locales";
 import { generateSectionsTypes, updateSectionsSettings, writeCompareFile } from "./generate-sections";
 import { generateSettings } from "./generate-settings";
-import { generateSchemaLocales } from "./generate-schema-locales";
 import { generateThemeFiles } from "./generate-theme-files";
+import { generateThemeLayout } from "./generate-theme-layout";
 import { generateThemeSettings } from "./generate-theme-settings";
-
-import { copyFiles } from "./init-copy-files";
+import { generateThemeSnippet } from "./generate-theme-snippets";
 import { initShopifyTypes } from "./init-shopify-types";
 import { initThemeFolders } from "./init-theme-folders";
 
@@ -36,6 +34,9 @@ export function getLocaleCount(sections: { [p: string]: ShopifySection }) {
   Object.values(sections).forEach((section) => {
     const blocks = section.blocks?.filter((block) => block.type !== "@app") ?? [];
     section?.settings?.forEach((setting) => {
+      if (setting.type === "color_scheme_group" || setting.type === "divider") {
+        return;
+      }
       if (setting.type === "paragraph" || setting.type === "header") {
         if (setting.content.split(" ").length > 4) {
           return;
@@ -50,9 +51,6 @@ export function getLocaleCount(sections: { [p: string]: ShopifySection }) {
       }
 
       if (setting?.id) {
-        if (setting.type === "color_scheme_group") {
-          return;
-        }
         if (
           setting.type === "select" ||
           setting.type === "multi_select" ||
@@ -98,7 +96,7 @@ export function getLocaleCount(sections: { [p: string]: ShopifySection }) {
     });
     blocks.forEach((block) => {
       block?.settings?.forEach((setting) => {
-        if (setting.type === "color_scheme_group") {
+        if (setting.type === "color_scheme_group" || setting.type === "divider") {
           return;
         }
         if (setting.type === "paragraph" || setting.type === "header") {

@@ -19,7 +19,7 @@ export const getSettings = async (api: RestClient, SHOPIFY_CMS_THEME_ID: string)
     return [
       ...acc,
       ...((group.settings as any)
-        .filter((s) => s.type !== "header" && s.type !== "paragraph")
+        .filter((s) => s.type !== "header" && s.type !== "paragraph" && s.type !== "divider")
         .sort((a, b) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0)) as ShopifySettingsInput[]),
     ];
   }, []);

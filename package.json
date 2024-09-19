@@ -1,6 +1,6 @@
 {
   "name": "shopify-theme-dev",
-  "version": "5.0.0-beta.36",
+  "version": "5.0.0-beta.53",
   "description": "Shopify Theme development with full Typescript Support",
   "author": "Felix Tellmann",
   "license": "MIT",
@@ -58,6 +58,7 @@
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",
     "fx-style": "^3.0.2",
+    "prettier": "3.3.2",
     "typescript": "^4.9.3"
   },
   "eslintConfig": {
@@ -95,5 +96,6 @@
     "breakLongMethodChains": true,
     "importFormatting": "oneline",
     "endOfLine": "auto"
-  }
+  },
+  "packageManager": "pnpm@9.7.1+sha512.faf344af2d6ca65c4c5c8c2224ea77a81a5e8859cbc4e06b1511ddce2f0151512431dd19e6aff31f2c6a8f5f2aced9bd2273e1fed7dd4de1868984059d2c4247"
 }

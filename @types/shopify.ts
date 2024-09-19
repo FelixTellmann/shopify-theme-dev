@@ -5,7 +5,26 @@ type AppDevGlobalSettings = {
   col_span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
   disabled?: boolean;
   dynamic_default?: string;
-  required?: boolean;
+  required?: boolean | string;
+  category?: string;
+  tooltip?: {
+    label?: string;
+    content: string;
+  };
+  modal?: {
+    label?: string;
+    size?: "small" | "large" | "fullScreen";
+    content: {
+      title: string;
+      description?: string;
+      size?: "small" | "large" | "fullScreen";
+      fields?: {
+        label: string;
+        copy_content: string;
+      }[];
+    };
+  };
+  click_to_copy?: boolean;
 } & {
   show_conditionally?:
     | {
@@ -89,6 +108,11 @@ export type ShopifyParagraph = {
   content: string;
   type: "paragraph";
   info?: string;
+} & AppDevGlobalSettings;
+
+export type ShopifyDivider = {
+  type: "divider";
+  style: "vertical" | "horizontal" | "new_row";
 } & AppDevGlobalSettings;
 
 export type ShopifyColorThemeGroupDefinition =
@@ -208,7 +232,7 @@ export type ShopifyRange = {
 export type ShopifySelect = {
   id: string;
   label: string;
-  options: { label: string; value: string; group?: string }[];
+  options: { label: string; value: string; group?: string; prefix_icon?: string; icon?: string }[];
   type: "select";
   default?: string;
   info?: string;
@@ -557,8 +581,9 @@ export type ShopifySectionBlock =
       type: string;
       limit?: number;
       preview_description?: string;
-      required?: boolean | number;
-      settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
+      category?: string;
+      required?: boolean | number | string;
+      settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph | ShopifyDivider)[];
     }
   | { type: "@app"; limit?: never; name?: never; preview_description?: string; settings?: never };
 
@@ -600,8 +625,33 @@ export type ShopifySection<T = never> = {
   max_blocks?: number;
   presets?: ShopifySectionPreset<T>[];
   preview_description?: string;
-  settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
-  sidebar?: { subtitle: string; title: string };
+  settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph | ShopifyDivider)[];
+  sidebar?: {
+    subtitle: string;
+    title: string;
+    category_groups?: {
+      id: string;
+      title: string;
+      style: string;
+      expanded?: boolean;
+      block_types?: string[];
+      tooltip?: {
+        content: string;
+      };
+      modal?: {
+        label: string;
+        size?: "small" | "large" | "fullScreen";
+        content: {
+          title: string;
+          description?: string;
+          fields?: {
+            label: string;
+            copy_content: string;
+          }[];
+        };
+      };
+    }[];
+  };
   tag?: "article" | "aside" | "div" | "footer" | "header" | "section";
 } & (
   | {
@@ -639,7 +689,7 @@ export type ShopifyAppBlock<T = never> = {
     };
   };
   /* Max Settings: 25 - Max Content blocks: 6*/
-  settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph)[];
+  settings?: (ShopifySettingsInput | ShopifyHeader | ShopifyParagraph | ShopifyDivider)[];
   stylesheet?: string;
   tag?: "article" | "aside" | "div" | "footer" | "header" | "section";
 } & (

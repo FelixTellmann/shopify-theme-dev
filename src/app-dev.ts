@@ -307,7 +307,8 @@ export const updateAppBlockSettings = (appBlocks: { [T: string]: ShopifyAppBlock
     sectionVariables.push("{%- liquid");
 
     appBlock.settings?.forEach((setting) => {
-      if (setting.type === "header" || setting.type === "paragraph") return;
+      if (setting.type === "header" || setting.type === "paragraph" || setting.type === "divider")
+        return;
       sectionVariables.push(
         `  assign ${
           RESERVED_VARIABLES.includes(setting.id) ? `_${setting.id}` : setting.id
