@@ -16,6 +16,7 @@ import { generateThemeSettings } from "./generate-theme-settings";
 import { generateThemeSnippet } from "./generate-theme-snippets";
 import { initShopifyTypes } from "./init-shopify-types";
 import { initThemeFolders } from "./init-theme-folders";
+import { require } from "./../require";
 
 const watch = require("node-watch");
 const toml = require("toml");
@@ -24,7 +25,7 @@ require("dotenv").config();
 
 const program = new Command();
 
-program.version(require(path.join("./../", "package.json")).version).parse(process.argv);
+// program.version(require(path.join("./../", "package.json")).version).parse(process.argv);
 
 const { SHOPIFY_THEME_FOLDER } = process.env;
 

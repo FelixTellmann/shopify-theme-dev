@@ -17,13 +17,14 @@ import { initShopifyTypes } from "./init-shopify-types";
 import { ShopifyAppBlock, ShopifySection, ShopifySettings } from "types/shopify";
 import { createMetafieldTypes } from "./create-metafield-types";
 import { getAllFiles, getLocaleCount, getSectionSchemas, getSettingsSchemas, isGiftCard, isLayout, isSection, isSettingUpdate } from "./index";
+import { require } from "./../require";
 
 const watch = require("node-watch");
 
 require("dotenv").config();
 
 const program = new Command();
-program.version(require(path.join("./../", "package.json")).version).parse(process.argv);
+// program.version(require(path.join("./../", "package.json")).version).parse(process.argv);
 
 const {
   SHOPIFY_APP_EXTENSION_OUT_FOLDER,
